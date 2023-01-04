@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { unstable_getServerSession as getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import AuthRedirect from "../lib/components/AuthRedirect/AuthRedirect";
 import { session as sessionCallback } from "../lib/auth/callbacks";
 
@@ -16,13 +15,11 @@ export default async function ProtectedLayout({
       session: sessionCallback,
     },
   });
-  console.log("sesh", session);
 
   if (!session?.user) {
+    // Workaround, as next's "redirect" doesn't work well in RFC for now
     return <AuthRedirect />;
   }
-
-  console.log("pass");
 
   return children;
 }

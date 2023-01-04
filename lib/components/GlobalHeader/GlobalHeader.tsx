@@ -1,231 +1,140 @@
-'use client';
+"use client";
 
-import { useState } from "react";
-import {
-  createStyles,
-  Container,
-  Avatar,
-  UnstyledButton,
-  Group,
-  Text,
-  Menu,
-  Tabs,
-  Burger,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import {
-  IconLogout,
-  IconHeart,
-  IconStar,
-  IconMessage,
-  IconSettings,
-  IconPlayerPause,
-  IconTrash,
-  IconSwitchHorizontal,
-  IconChevronDown,
-} from "@tabler/icons";
+import Image from "next/image";
+import Link from "next/link";
+import { getSession } from "next-auth/react";
+import { use, useEffect, useState } from "react";
+import { Session } from "next-auth";
+import { usePathname } from "next/navigation";
 
-const useStyles = createStyles((theme) => ({
-  header: {
-    paddingTop: theme.spacing.sm,
-    backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[6]
-        : theme.colors.gray[0],
-    borderBottom: `1px solid ${
-      theme.colorScheme === "dark" ? "transparent" : theme.colors.gray[2]
-    }`,
-    marginBottom: 120,
-  },
+const links: Record<string, string> = {
+  "": "Dashboard",
+  members: "Members",
+  memberships: "Memberships",
+  transactions: "Transactions",
+};
 
-  title: {
-    fontSize: "1.5rem",
-  },
+export default function GlobalHeader() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [userMenuVisible, setUserMenuVisibility] = useState(false);
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const path = usePathname();
 
-  mainSection: {
-    paddingBottom: theme.spacing.sm,
-  },
+  const linkClass = (p: string) =>
+    "block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 dark:text-white ".concat(
+      path?.split("/")[1] === p
+        ? "bg-blue-700 text-white md:text-blue-700"
+        : "bg-gray-50 text-black"
+    );
 
-  user: {
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-    padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
-    borderRadius: theme.radius.sm,
-    transition: "background-color 100ms ease",
-
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
-    },
-
-  },
-  userActive: {
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
-  },
-
-  tabsList: {
-    borderBottom: "0 !important",
-  },
-
-  tab: {
-    fontWeight: 500,
-    height: 38,
-    backgroundColor: "transparent",
-
-    "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[5]
-          : theme.colors.gray[1],
-    },
-
-    "&[data-active]": {
-      backgroundColor:
-        theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-      borderColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[7]
-          : theme.colors.gray[2],
-    },
-  },
-}));
-
-interface HeaderTabsProps {
-  user: { name: string; image: string };
-  tabs: string[];
-}
-
-const GlobalHeader: React.FC = () => {
-  const { classes, theme, cx } = useStyles();
-  const [opened, { toggle }] = useDisclosure(false);
-  const [userMenuOpened, setUserMenuOpened] = useState(false);
-
-  const user = {
-    name: "Konstantin Konstantinopolsky",
-    image: "https://via.placeholder.com/150",
-  };
-
-  const tabs = ["Dashboard", "Members", "Accounting", "Subscriptions"];
-
-  const items = tabs.map((tab) => (
-    <Tabs.Tab value={tab} key={tab}>
-      {tab}
-    </Tabs.Tab>
-  ));
+  useEffect(() => {
+    // @todo replace with use() when it'll become stable
+    (async () => {
+      const s = await getSession();
+      setSession(s);
+    })();
+  }, []);
 
   return (
-    <div className={classes.header}>
-      <Container className={classes.mainSection}>
-        <Group position="apart">
-          <h1 className={classes.title}>
+    <nav className="bg-white border-gray-200 rounded dark:bg-gray-900 mb-8">
+      <div className="container flex flex-wrap items-center justify-between mx-auto max-w-none relative">
+        <Link href="/" className="flex items-center">
+          <h1 className="text-3xl font-bold self-center whitespace-nowrap">
             Swynca
             <sup> β</sup>
           </h1>
-
-          <Menu
-            width={260}
-            position="bottom-end"
-            transition="pop-top-right"
-            onClose={() => setUserMenuOpened(false)}
-            onOpen={() => setUserMenuOpened(true)}
+        </Link>
+        <div className="flex items-center md:order-2 relative">
+          <button
+            type="button"
+            className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+            id="user-menu-button"
+            aria-expanded={userMenuVisible ? "true" : "false"}
+            onClick={() => setUserMenuVisibility(!userMenuVisible)}
+            data-dropdown-toggle="user-dropdown"
+            data-dropdown-placement="bottom"
           >
-            <Menu.Target>
-              <UnstyledButton
-                className={cx(classes.user, {
-                  [classes.userActive]: userMenuOpened,
-                })}
-              >
-                <Group spacing={7}>
-                  <Avatar
-                    src={user.image}
-                    alt={user.name}
-                    radius="xl"
-                    size={20}
-                  />
-                  <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                    {user.name}
-                  </Text>
-                  <IconChevronDown size={12} stroke={1.5} />
-                </Group>
-              </UnstyledButton>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item
-                icon={
-                  <IconHeart
-                    size={14}
-                    color={theme.colors.red[6]}
-                    stroke={1.5}
-                  />
-                }
-              >
-                Liked posts
-              </Menu.Item>
-              <Menu.Item
-                icon={
-                  <IconStar
-                    size={14}
-                    color={theme.colors.yellow[6]}
-                    stroke={1.5}
-                  />
-                }
-              >
-                Saved posts
-              </Menu.Item>
-              <Menu.Item
-                icon={
-                  <IconMessage
-                    size={14}
-                    color={theme.colors.blue[6]}
-                    stroke={1.5}
-                  />
-                }
-              >
-                Your comments
-              </Menu.Item>
-
-              <Menu.Label>Settings</Menu.Label>
-              <Menu.Item icon={<IconSettings size={14} stroke={1.5} />}>
-                Account settings
-              </Menu.Item>
-              <Menu.Item icon={<IconSwitchHorizontal size={14} stroke={1.5} />}>
-                Change account
-              </Menu.Item>
-              <Menu.Item icon={<IconLogout size={14} stroke={1.5} />}>
-                Logout
-              </Menu.Item>
-
-              <Menu.Divider />
-
-              <Menu.Label>Danger zone</Menu.Label>
-              <Menu.Item icon={<IconPlayerPause size={14} stroke={1.5} />}>
-                Pause subscription
-              </Menu.Item>
-              <Menu.Item
-                color="red"
-                icon={<IconTrash size={14} stroke={1.5} />}
-              >
-                Delete account
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </Group>
-      </Container>
-      <Container>
-        <Tabs
-          defaultValue="Home"
-          variant="outline"
-          classNames={{
-            root: classes.tabs,
-            tabsList: classes.tabsList,
-            tab: classes.tab,
-          }}
+            <span className="sr-only">Open user menu</span>
+            <Image
+              className="w-8 h-8 rounded-full"
+              src={session?.user?.image as string}
+              width={32}
+              height={32}
+              alt="user photo"
+            />
+          </button>
+          <div
+            className="z-50 my-4 absolute top-8 right-0 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+            hidden={!userMenuVisible}
+            id="user-dropdown"
+          >
+            <div className="px-4 py-3">
+              <span className="block text-sm text-gray-900 dark:text-white">
+                {session?.user?.name}
+              </span>
+              <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
+                {session?.user?.email}
+              </span>
+            </div>
+            <ul className="py-1" aria-labelledby="user-menu-button">
+              <li>
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:hover:bg-gray-600 dark:text-gray-200"
+                >
+                  Profile
+                </a>
+              </li>
+              <li>
+                <Link
+                  href="/api/auth/signout"
+                  className="block px-4 py-2 text-sm text-red-700  dark:text-red-500"
+                >
+                  Sign out
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <button
+            data-collapse-toggle="mobile-menu-2"
+            type="button"
+            className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            aria-controls="mobile-menu-2"
+            aria-expanded={dropdownVisible}
+            onClick={() => setDropdownVisible(!dropdownVisible)}
+          >
+            <span className="sr-only">Open main menu</span>
+            <svg
+              className="w-6 h-6"
+              aria-hidden="true"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <div
+          className="items-center justify-between w-full md:flex md:w-auto md:order-1 md:static absolute top-full left-0"
+          hidden={!dropdownVisible}
+          id="mobile-menu-2"
         >
-          <Tabs.List>{items}</Tabs.List>
-        </Tabs>
-      </Container>
-    </div>
+          <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            {Object.entries(links).map(([path, label]) => (
+              <li key={path}>
+                <Link href={`/${path}`} className={linkClass(path)}>
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </nav>
   );
-};
-
-export default GlobalHeader;
+}

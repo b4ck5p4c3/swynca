@@ -5,7 +5,6 @@ const session: CallbacksOptions["session"] = async ({
   token,
   user,
 }) => {
-  console.log(session, user);
   session = {
     ...session,
     user: {
