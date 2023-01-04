@@ -1,7 +1,17 @@
-import React from 'react'
+import { unstable_getServerSession as getServerSession } from "next-auth";
+import { session as sessionCallback } from "../../lib/auth/callbacks";
 
-export default function page() {
+export default async function DashboardPage() {
+  const session = await getServerSession({
+    callbacks: {
+      session: sessionCallback,
+    },
+  });
+
   return (
-    <div>Root Page</div>
+    <div>
+      <h1>Look ma, rendered on server</h1>
+      <p>Hi, {session?.user?.name} {session?.user?.email} {session?.user?.image}</p>
+    </div>
   )
 }
