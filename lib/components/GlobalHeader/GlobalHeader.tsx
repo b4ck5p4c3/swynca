@@ -120,7 +120,7 @@ export default function GlobalHeader() {
           </button>
         </div>
         <div
-          className="items-center justify-between w-full md:flex md:w-auto md:order-1 md:static absolute top-full left-0"
+          className="items-center justify-between w-full md:flex md:w-auto md:order-1 md:static absolute top-full left-0 z-50"
           hidden={!dropdownVisible}
           id="mobile-menu-2"
         >
