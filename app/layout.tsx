@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { unstable_getServerSession as getServerSession } from "next-auth";
-import AuthRedirect from "../lib/components/AuthRedirect/AuthRedirect";
+import { getServerSession } from "next-auth";
+import AuthRedirect from "../shared/components/AuthRedirect/AuthRedirect";
 import { session as sessionCallback } from "../lib/auth/callbacks";
 
 type ProtectedLayoutProps = {
@@ -17,7 +17,7 @@ export default async function ProtectedLayout({
   });
 
   if (!session?.user) {
-    // Workaround, as next's "redirect" doesn't work well in RFC for now
+    // Workaround, as next's "redirect" doesn't work well in RSC for now
     return <AuthRedirect />;
   }
 

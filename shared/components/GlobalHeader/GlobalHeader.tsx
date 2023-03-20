@@ -11,7 +11,7 @@ const links: Record<string, string> = {
   "": "Dashboard",
   members: "Members",
   memberships: "Memberships",
-  transactions: "Transactions",
+  finance: "Finance",
 };
 
 export default function GlobalHeader() {
@@ -21,9 +21,9 @@ export default function GlobalHeader() {
   const path = usePathname();
 
   const linkClass = (p: string) =>
-    "block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0 dark:text-white ".concat(
+    "block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0".concat(
       path?.split("/")[1] === p
-        ? "bg-blue-700 text-white md:text-blue-700"
+        ? "bg-blue-700 text-violet-600 md:text-violet-600"
         : "bg-gray-50 text-black"
     );
 
@@ -36,7 +36,7 @@ export default function GlobalHeader() {
   }, []);
 
   return (
-    <nav className="bg-white border-gray-200 rounded dark:bg-gray-900 mb-8">
+    <nav className="bg-white border-gray-200 rounded mb-8">
       <div className="container flex flex-wrap items-center justify-between mx-auto max-w-none relative">
         <Link href="/" className="flex items-center">
           <h1 className="text-3xl font-bold self-center whitespace-nowrap">
@@ -47,7 +47,7 @@ export default function GlobalHeader() {
         <div className="flex items-center md:order-2 relative">
           <button
             type="button"
-            className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+            className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300"
             id="user-menu-button"
             aria-expanded={userMenuVisible ? "true" : "false"}
             onClick={() => setUserMenuVisibility(!userMenuVisible)}
@@ -64,15 +64,15 @@ export default function GlobalHeader() {
             />
           </button>
           <div
-            className="z-50 my-4 absolute top-8 right-0 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+            className="z-50 my-4 absolute top-8 right-0 text-base list-none bg-white divide-y divide-gray-100 rounded shadow"
             hidden={!userMenuVisible}
             id="user-dropdown"
           >
             <div className="px-4 py-3">
-              <span className="block text-sm text-gray-900 dark:text-white">
+              <span className="block text-sm text-gray-900">
                 {session?.user?.name}
               </span>
-              <span className="block text-sm font-medium text-gray-500 truncate dark:text-gray-400">
+              <span className="block text-sm font-medium text-gray-500 truncate">
                 {session?.user?.email}
               </span>
             </div>
@@ -80,7 +80,7 @@ export default function GlobalHeader() {
               <li>
                 <a
                   href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 dark:hover:bg-gray-600 dark:text-gray-200"
+                  className="block px-4 py-2 text-sm text-gray-700"
                 >
                   Profile
                 </a>
@@ -88,7 +88,7 @@ export default function GlobalHeader() {
               <li>
                 <Link
                   href="/api/auth/signout"
-                  className="block px-4 py-2 text-sm text-red-700  dark:text-red-500"
+                  className="block px-4 py-2 text-sm text-red-700"
                 >
                   Sign out
                 </Link>
@@ -98,7 +98,7 @@ export default function GlobalHeader() {
           <button
             data-collapse-toggle="mobile-menu-2"
             type="button"
-            className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
             aria-controls="mobile-menu-2"
             aria-expanded={dropdownVisible}
             onClick={() => setDropdownVisible(!dropdownVisible)}
@@ -124,7 +124,7 @@ export default function GlobalHeader() {
           hidden={!dropdownVisible}
           id="mobile-menu-2"
         >
-          <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+          <ul className="flex flex-col p-4 mt-4 border font-mono border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white">
             {Object.entries(links).map(([path, label]) => (
               <li key={path}>
                 <Link href={`/${path}`} className={linkClass(path)}>
