@@ -1,11 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import classNames from "classnames";
 import Link from "next/link";
+import { getBalance, getBasicExpenses } from "@/lib/space-transactions";
+import { formatCurrency } from "@/lib/locale";
 
 const prisma = new PrismaClient();
 
 export default async function SpaceFinancePage() {
+  const currentBalance = await getBalance();
+  const basicExpenses = await getBasicExpenses();
+  const balanceDifference = currentBalance - basicExpenses;
   const members = await prisma.member.findMany();
+
   return (
     <div className="flex flex-col gap-8">
       <div className="">
@@ -16,16 +22,25 @@ export default async function SpaceFinancePage() {
       <div className="relative overflow-x-auto shadow-lg sm:rounded-lg p-8 flex flex-col md:flex-row gap-8 md:gap-0 justify-between">
         <div className="flex flex-col gap-2">
           <h3 className="text-gray-600 font-semibold">Current balance</h3>
-          <span className="text-5xl font-semibold">12,744 ₽</span>
+          <span className="text-5xl font-semibold">
+            {formatCurrency(currentBalance)}
+          </span>
         </div>
         <div className="flex flex-col gap-2">
           <h3 className="text-gray-600 font-semibold">Basic expenses</h3>
-          <span className="text-5xl font-semibold">65,000 ₽</span>
+          <span className="text-5xl font-semibold">
+            {formatCurrency(basicExpenses)}
+          </span>
         </div>
         <div className="flex flex-col gap-2">
           <h3 className="text-gray-600 font-semibold">Difference</h3>
-          <span className="text-5xl font-semibold text-red-500">
-            &minus; 49,037 ₽
+          <span
+            className={classNames("text-5xl font-semibold", {
+              "text-red-500": balanceDifference < 0,
+              "text-green-500": balanceDifference > 0,
+            })}
+          >
+            {formatCurrency(balanceDifference)}
           </span>
         </div>
       </div>

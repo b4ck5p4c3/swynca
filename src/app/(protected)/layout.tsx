@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import GlobalHeader from "../../shared/components/GlobalHeader/GlobalHeader";
+import GlobalHeader from "@/shared/components/GlobalHeader/GlobalHeader";
 
 import '../../styles/globals.scss';
 

@@ -65,6 +65,7 @@ model SpaceTransaction {
   type    TransactionType
   amount  Int
   comment String?
+  date    DateTime        @default(now())
 
   // Who created this transaction. Null if created automatically.
   actorId String?

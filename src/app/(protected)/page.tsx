@@ -1,4 +1,4 @@
-import { unstable_getServerSession as getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 import { session as sessionCallback } from "../../lib/auth/callbacks";
 
 export default async function DashboardPage() {
