@@ -9,6 +9,22 @@ export default async function MembersPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
+        <div className="w-full text-sm text-left text-gray-500">
+          <div className="p-5 text-lg font-semibold text-left text-gray-900 bg-white">
+            Actions
+          </div>
+          <div className="text-xs text-gray-700 uppercase bg-gray-200">
+            <Link
+                href={`/members/add`}
+                className="px-6 py-4 text-right"
+            >
+              Add
+            </Link>
+            <button className="px-6 py-4 text-right">Delete</button>
+          </div>
+        </div>
+      </div>
+      <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
         <table className="w-full text-sm text-left text-gray-500">
           <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg-white">
             Active members
@@ -31,6 +47,7 @@ export default async function MembersPage() {
             </tr>
           </thead>
           <tbody>
+
             {members
               .filter((m) => m.status === "ACTIVE")
               .map((member, idx) => (

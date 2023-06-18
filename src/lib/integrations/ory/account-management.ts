@@ -2,8 +2,7 @@ import { getRequiredEnv } from "@/lib/utils";
 import {
   Configuration,
   Identity,
-  IdentityApi,
-  JsonPatch,
+  IdentityApi, IdentityApiCreateIdentityRequest, IdentityApiUpdateIdentityRequest, IdentityState,
 } from "@ory/kratos-client";
 import {
   AccountCreateDTO,
@@ -37,9 +36,29 @@ export default class OryAccountManagement
     this.api = new IdentityApi(
       new Configuration({
         basePath: getRequiredEnv("ORY_ADMIN_URL"),
-        apiKey: getRequiredEnv("ORY_ADMIN_APIKEY"),
+        apiKey: 'Bearer ' + getRequiredEnv("ORY_ADMIN_APIKEY"),
       })
     );
+  }
+
+  async disable(id: string): Promise<AccountDTO> {
+    return this.changeAccountState(id, IdentityState.Inactive);
+  }
+  async enable(id: string): Promise<AccountDTO> {
+    return this.changeAccountState(id, IdentityState.Active);
+  }
+
+  async changeAccountState(id: string, state: IdentityState): Promise<AccountDTO> {
+    const request:IdentityApiUpdateIdentityRequest = {
+      id: id,
+      updateIdentityBody: {
+        state: state,
+        schema_id: 'person',
+        traits: {}
+      },
+    }
+    const result = await this.api.updateIdentity(request);
+    return identityToAccount(result.data);
   }
 
   async findAccountById(id: string): Promise<AccountDTO | undefined> {
@@ -52,30 +71,37 @@ export default class OryAccountManagement
   }
 
   async createAccount(props: AccountCreateDTO): Promise<AccountDTO> {
-    const result = await this.api.createIdentity({
+    const request:IdentityApiCreateIdentityRequest = {
       createIdentityBody: {
-        schema_id: "default",
+        schema_id: "WTF?",
+        state: IdentityState.Active,
         verifiable_addresses: [
           {
             value: props.email,
-            status: "verified", // @todo I DUNNO KNOW
-            via: "ADMIN_FORCE", // @todo I DUNNO KNOW AS WELL
+            via: 'email',
             verified: true,
+            status: 'verified',
           },
         ],
         traits: {
           name: props.name,
-        },
-      },
-    });
+          email: props.email,
+        }
+      }
+    };
+    const result = await this.api.createIdentity(request);
 
     return identityToAccount(result.data);
   }
 
   async updateAccount(id: string, patch: AccountPatchDTO): Promise<AccountDTO> {
+    const jsonPatch = ['name', 'email'].map(el => {
+      // @ts-ignore
+      return { from: `/${el}`, op: 'replace', path: `/${el}`, value: patch[el] };
+    });
     const result = await this.api.patchIdentity({
       id,
-      jsonPatch: {},
+      jsonPatch: jsonPatch,
     });
 
     return identityToAccount(result.data);

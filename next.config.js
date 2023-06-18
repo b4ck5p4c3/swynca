@@ -5,7 +5,8 @@ const nextConfig = {
     domains: ['s.gravatar.com'],
   },
   experimental: {
-    appDir: true
+    appDir: true,
+    serverActions: true
   }
 }
 
