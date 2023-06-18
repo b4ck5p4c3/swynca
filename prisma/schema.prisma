@@ -46,11 +46,18 @@ model Member {
   status                      MemberStatuses               @default(ACTIVE)
   joinedAt                    DateTime                     @default(now())
   ExternalAuthenticationAuth0 ExternalAuthenticationAuth0?
+  ExternalAuthenticationOry   ExternalAuthenticationOry?
   SpaceTransaction            SpaceTransaction[]
 }
 
 model ExternalAuthenticationAuth0 {
   auth0Id  String @id @unique
+  memberId String @unique
+  member   Member @relation(fields: [memberId], references: [id])
+}
+
+model ExternalAuthenticationOry {
+  oryId    String @id @unique
   memberId String @unique
   member   Member @relation(fields: [memberId], references: [id])
 }

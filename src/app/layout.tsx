@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { getServerSession } from "next-auth";
-import AuthRedirect from "../shared/components/AuthRedirect/AuthRedirect";
-import { session as sessionCallback } from "../lib/auth/callbacks";
+import AuthRedirect from "shared/components/AuthRedirect/AuthRedirect";
+import { session as sessionCallback } from "lib/auth/callbacks";
 
 type ProtectedLayoutProps = {
   children: ReactNode;
@@ -9,7 +9,9 @@ type ProtectedLayoutProps = {
 
 export default async function ProtectedLayout({
   children,
-}: ProtectedLayoutProps) {
+}: {
+  children: ReactNode;
+}) {
   const session = await getServerSession({
     callbacks: {
       session: sessionCallback,
@@ -21,5 +23,5 @@ export default async function ProtectedLayout({
     return <AuthRedirect />;
   }
 
-  return children;
+  return <>{children}</>;
 }
