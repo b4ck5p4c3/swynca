@@ -1,43 +1,24 @@
+'use client'
+
 import React from "react"
-import {v4 as uuidv4} from 'uuid';
-import {MemberStatuses, PrismaClient} from "@prisma/client";
-import OryAccountManagement from "@/lib/integrations/ory/account-management";
+import addItem from "./action";
+import {useRouter} from "next/navigation";
 
-async function addItem(data: FormData) {
-  'use server'
-    const ident = new OryAccountManagement();
-    try {
-      const oryResult = await ident.createAccount({
-        name:data.get('name') as string,
-        email: data.get('email') as string,
-        active: true
-      });
-      const prisma = new PrismaClient();
-      const result = await prisma.member.create({
-        data: {
-          name: data.get('name') as string,
-          email: data.get('email') as string,
-          status: data.get('status') as MemberStatuses,
-          id: uuidv4(),
-        }
-      });
-      const relationRecord = await prisma.externalAuthenticationOry.create({
-        data: {
-          memberId: result.id,
-          oryId: oryResult.id,
-        }
-      });
-      console.log('addItem', result);
-    } catch (e: any) {
-      console.log('addItem createAccount error', e.response.data);
-    }
-}
+export default function AddForm() {
+  const { push } = useRouter();
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+    const data = new FormData();
+    data.set('name', event.target.name.value);
+    data.set('email', event.target.email.value);
+    data.set('status', event.target.status.value);
+    await addItem(data);
+    push('/members');
+  };
 
-
-function FormComponent() {
   return (
     <div>
-      <form action={addItem}>
+      <form onSubmit={handleSubmit}>
         <div>
           <label>Name</label>
           <input type="text" name="name"/>
@@ -54,8 +35,4 @@ function FormComponent() {
       </form>
     </div>
   );
-}
-
-export default async function MemberAddPage() {
-  return <FormComponent/>
 }
