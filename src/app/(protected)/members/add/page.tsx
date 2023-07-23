@@ -21,6 +21,13 @@ async function addItem(data: FormData) {
           id: uuidv4(),
         }
       });
+      const relationRecord = await prisma.externalAuthenticationOry.create({
+        data: {
+          memberId: result.id,
+          oryId: oryResult.id,
+        }
+      });
+      console.log('addItem', result);
     } catch (e: any) {
       console.log('addItem createAccount error', e.response.data);
     }
