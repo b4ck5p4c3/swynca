@@ -35,6 +35,11 @@ export default class OryAccountManagement
   implements IntegrationAccountManagement
 {
   private api: IdentityApi;
+
+  private readonly traits: {
+    name : string|undefined,
+    email: string|undefined,
+  };
   constructor() {
     this.api = new IdentityApi(
       new Configuration({
@@ -42,6 +47,13 @@ export default class OryAccountManagement
         apiKey: 'Bearer ' + getRequiredEnv("ORY_ADMIN_APIKEY"),
       })
     );
+    this.traits = {name: undefined, email: undefined};
+  }
+
+  setTraits(name: string, email: string): OryAccountManagement {
+    this.traits.name = name;
+    this.traits.email = email;
+    return this;
   }
 
   async disable(id: string): Promise<AccountDTO> {
@@ -56,8 +68,8 @@ export default class OryAccountManagement
       id: id,
       updateIdentityBody: {
         state: state,
-        schema_id: 'person',
-        traits: {}
+        schema_id: getRequiredEnv("ORY_MEMBER_SCHEMA_ID"),
+        traits: this.traits,
       },
     }
     const result = await this.api.updateIdentity(request);
