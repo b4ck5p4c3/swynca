@@ -2,7 +2,10 @@ import { getRequiredEnv } from "@/lib/utils";
 import {
   Configuration,
   Identity,
-  IdentityApi, IdentityApiCreateIdentityRequest, IdentityApiUpdateIdentityRequest, IdentityState,
+  IdentityApi,
+  IdentityApiCreateIdentityRequest,
+  IdentityApiUpdateIdentityRequest,
+  IdentityState,
 } from "@ory/kratos-client";
 import {
   AccountCreateDTO,
@@ -73,7 +76,7 @@ export default class OryAccountManagement
   async createAccount(props: AccountCreateDTO): Promise<AccountDTO> {
     const request:IdentityApiCreateIdentityRequest = {
       createIdentityBody: {
-        schema_id: "WTF?",
+        schema_id: getRequiredEnv("ORY_MEMBER_SCHEMA_ID"),
         state: IdentityState.Active,
         verifiable_addresses: [
           {
