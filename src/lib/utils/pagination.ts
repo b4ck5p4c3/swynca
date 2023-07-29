@@ -3,23 +3,32 @@ export type PaginationResult = {
   offset: number;
   perPage: number;
   count: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+  pages: number;
 };
 
 export function getPagination(
-  page: number | string = 0,
+  page: number | string = 1,
   perPage: number = 10,
   count: number
 ): PaginationResult {
-  const parsedPage = Number(page as string);
-
-  if (Number.isNaN(parsedPage)) {
-    return { page: 0, offset: 0, perPage: 10, count };
+  let parsedPage = Number(page as string);
+  if (parsedPage < 1) {
+    parsedPage = 1;
   }
+
+  const offset = perPage * (parsedPage - 1);
+  const hasNext = offset + perPage < count;
+  const hasPrevious = parsedPage > 1;
 
   return {
     count,
     page: parsedPage,
     perPage,
-    offset: perPage * parsedPage,
+    pages: Math.ceil(count / perPage),
+    offset,
+    hasNext,
+    hasPrevious,
   };
 }
