@@ -1,11 +1,15 @@
-import { NextPage } from "next";
 import React from "react";
 import {PrismaClient} from "@prisma/client";
 import OryAccountManagement from "@/lib/integrations/ory/account-management";
+import {redirect} from "next/navigation";
 
 async function update(data: FormData) {
   'use server'
   const id = data.get('id') as string;
+  const memberNewData = {
+    name: data.get('name') as string,
+    email: data.get('email') as string,
+  };
   const prisma = new PrismaClient();
   const member = await prisma.member.findUnique({where: {id}});
   const relationRecord = await prisma.externalAuthenticationOry.findUnique({where:{memberId: id}});
@@ -16,20 +20,17 @@ async function update(data: FormData) {
   try {
     await ident.setTraits(member.name, member.email).updateAccount(
       relationRecord.oryId,
-      {email: member.email, name: member.name}
+      memberNewData
     );
+    await prisma.member.update({
+      where: {id},
+      data: memberNewData
+    });
   } catch (e: any) {
     console.log('update error', e.response.data);
     return;
   }
-  await prisma.member.update({
-    where: {id},
-    data: {
-      name: data.get('name') as string,
-      email: data.get('email') as string,
-    }
-  });
-
+  redirect('/members');
 }
 
 // @ts-ignore
@@ -40,13 +41,13 @@ function FormComponent({id, name, email}) {
       <form action={update}>
         <div>
           <label>Name:</label>
-          <input type="text" name="name" value={name}/>
+          <input type="text" name="name" defaultValue={name}/>
         </div>
         <div>
           <label>Email:</label>
-          <input type="text" name="email" value={email}/>
+          <input type="text" name="email" defaultValue={email}/>
         </div>
-        <input type="hidden" name="id" value={id}/>
+        <input type="hidden" name="id" defaultValue={id}/>
         <button type="submit">Send message</button>
       </form>
     </div>

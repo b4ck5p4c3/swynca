@@ -111,14 +111,14 @@ export default class OryAccountManagement
 
   async updateAccount(id: string, patch: AccountPatchDTO): Promise<AccountDTO> {
     const jsonPatch = ['name', 'email'].map(el => {
+      const path = `/metadata_admin/${el}`;
       // @ts-ignore
-      return { from: `/${el}`, op: 'replace', path: `/${el}`, value: patch[el] };
+      return { from: path, op: 'replace', path: path, value: patch[el] };
     });
     const result = await this.api.patchIdentity({
       id,
       jsonPatch: jsonPatch,
     });
-
     return identityToAccount(result.data);
   }
 }
