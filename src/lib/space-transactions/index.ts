@@ -18,7 +18,7 @@ const BALANCES_SPACE_UUID = "00000000-0000-0000-0000-000000000000";
 
 export type CreateGeneric = {
   type: TransactionType;
-  amount: number;
+  amount: Prisma.Decimal;
   comment?: string;
   actorId?: string;
 };
@@ -30,7 +30,7 @@ export type CreateDeposit = CreateGeneric & {
 
 export type CreateWithdrawal = CreateGeneric & {
   type: "WITHDRAWAL";
-  sourcew: SpaceTransactionWithdrawal;
+  target: SpaceTransactionWithdrawal;
 };
 
 export type CreateInput = CreateDeposit | CreateWithdrawal;
@@ -90,7 +90,7 @@ export async function create(input: CreateInput): Promise<SpaceTransaction> {
  * Current space balance
  * @returns Current space balance in cents
  */
-export async function getBalance(): Promise<number> {
+export async function getBalance(): Promise<Prisma.Decimal> {
   const { amount } = (await prisma.balance.findFirst({
     where: {
       entityId: BALANCES_SPACE_UUID,
@@ -103,6 +103,6 @@ export async function getBalance(): Promise<number> {
  * Returns space basic expenses
  * @returns Space basic expenses in cents
  */
-export async function getBasicExpenses(): Promise<number> {
-  return 65 * 1000 * 100; // Hardcoded const for 65,000
+export async function getBasicExpenses(): Promise<Prisma.Decimal> {
+  return new Prisma.Decimal(65 * 1000); // Hardcoded const for 65,000
 }

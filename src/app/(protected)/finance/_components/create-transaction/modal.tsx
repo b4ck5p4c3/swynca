@@ -24,11 +24,14 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
   const { refresh } = useRouter();
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
-  const [source, setSource] = useState<
-    SpaceTransactionDeposit | SpaceTransactionWithdrawal
-  >("MAGIC");
-  const submitDisabled = !amount || !description;
+  const [source, setSource] = useState<SpaceTransactionDeposit>(
+    SpaceTransactionDeposit.MAGIC
+  );
+  const [target, setTarget] = useState<SpaceTransactionWithdrawal>(
+    SpaceTransactionWithdrawal.MAGIC
+  );
 
+  const submitDisabled = !amount || !description;
   const currencySymbol = useMemo(
     () =>
       new Intl.NumberFormat(process.env.NEXT_PUBLIC_SWYNCA_LOCALE, {
@@ -42,19 +45,17 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
     let result;
     if (kind === TransactionType.DEPOSIT) {
       result = await deposit({
-        amount: Number(amount.replace(/\,/g, ".")) * 100,
+        amount,
         description,
-        source: source as SpaceTransactionDeposit,
+        source,
       });
     } else {
       result = await withdraw({
-        amount: Number(amount.replace(/\,/g, ".")) * 100,
+        amount,
         description,
-        source: source as SpaceTransactionWithdrawal,
+        target,
       });
     }
-
-    console.log("hello", result);
 
     if (!result.success) {
       console.error(result);
@@ -89,9 +90,7 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   type="number"
-                  name=""
                   min="0"
-                  id=""
                   step="0.01"
                   placeholder="0.00"
                   className="w-full rounded border border-gray-200 text-3xl p-3"
