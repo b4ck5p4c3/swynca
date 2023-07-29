@@ -1,9 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import Auth0Provider from "next-auth/providers/auth0";
 import { memberToProfile } from "../../auth/profile";
-import { getRequiredEnv } from "@/lib/utils";
-
-const prisma = new PrismaClient();
+import { getRequiredEnv } from "@/lib/utils/env";
+import { prisma } from "@/lib/db";
 
 const Auth0ProviderFactory = () =>
   Auth0Provider({

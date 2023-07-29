@@ -47,7 +47,7 @@ export default function GlobalHeader() {
         <div className="flex items-center md:order-2 relative">
           <button
             type="button"
-            className="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300"
+            className="flex text-sm rounded-xl"
             id="user-menu-button"
             aria-expanded={userMenuVisible ? "true" : "false"}
             onClick={() => setUserMenuVisibility(!userMenuVisible)}
@@ -55,13 +55,19 @@ export default function GlobalHeader() {
             data-dropdown-placement="bottom"
           >
             <span className="sr-only">Open user menu</span>
-            <Image
-              className="w-8 h-8 rounded-full"
-              src={session?.user?.image as string}
-              width={32}
-              height={32}
-              alt="user photo"
-            />
+            {!!session?.user?.image ? (
+              <Image
+                className="w-8 h-8 rounded-xl"
+                src={session?.user?.image as string}
+                width={32}
+                height={32}
+                alt="user photo"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-slate-300 rounded-xl flex justify-center items-center">
+                ?
+              </div>
+            )}
           </button>
           <div
             className="z-50 my-4 absolute top-8 right-0 text-base list-none bg-white divide-y divide-gray-100 rounded shadow"
@@ -78,10 +84,7 @@ export default function GlobalHeader() {
             </div>
             <ul className="py-1" aria-labelledby="user-menu-button">
               <li>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700"
-                >
+                <a href="#" className="block px-4 py-2 text-sm text-gray-700">
                   Profile
                 </a>
               </li>

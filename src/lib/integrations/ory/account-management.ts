@@ -1,4 +1,4 @@
-import { getRequiredEnv } from "@/lib/utils";
+import { getRequiredEnv } from "@/lib/utils/env";
 import {
   Configuration,
   Identity,

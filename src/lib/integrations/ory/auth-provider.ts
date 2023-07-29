@@ -1,7 +1,7 @@
 import { Member, PrismaClient } from "@prisma/client";
 import { OAuthConfig } from "next-auth/providers";
 import { MemberProfile, memberToProfile } from "../../auth/profile";
-import { getRequiredEnv } from "@/lib/utils";
+import { getRequiredEnv } from "@/lib/utils/env";
 
 const prisma = new PrismaClient();
 

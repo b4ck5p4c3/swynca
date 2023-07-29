@@ -1,19 +1,39 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/db";
 import classNames from "classnames";
-import Link from "next/link";
 import { getBalance, getBasicExpenses } from "@/lib/space-transactions";
 import { formatCurrency } from "@/lib/locale";
-import NewSpaceTransaction from "@/shared/components/NewSpaceTransaction/NewSpaceTransaction";
-import CreateTransactionModal from "../_components/create-transaction/modal";
 import CreateTransactionButton from "../_components/create-transaction/button";
+import Pagination from "./pagination";
+import { getPagination } from "@/lib/utils/pagination";
+import { TransactionType } from "@prisma/client";
+import { cache } from "react";
 
-const prisma = new PrismaClient();
+const TRANSACTIONS_PER_PAGE = 1;
 
-export default async function SpaceFinancePage() {
+type SpaceFinancePageParams = {
+  query: {
+    page: string;
+  };
+};
+
+export default async function SpaceFinancePage(params: SpaceFinancePageParams) {
   const currentBalance = await getBalance();
   const basicExpenses = await getBasicExpenses();
   const balanceDifference = currentBalance - basicExpenses;
-  const members = await prisma.member.findMany();
+
+  const count = await prisma.spaceTransaction.count();
+  const pagination = getPagination(
+    params.query?.page,
+    TRANSACTIONS_PER_PAGE,
+    count
+  );
+
+  const transactions = await prisma.spaceTransaction.findMany({
+    orderBy: [{ createdAt: "desc" }],
+    include: { Actor: { select: { name: true } } },
+    skip: pagination.offset,
+    take: pagination.perPage,
+  });
 
   return (
     <>
@@ -64,46 +84,55 @@ export default async function SpaceFinancePage() {
             <thead className="text-xs text-gray-700 uppercase bg-gray-200">
               <tr>
                 <th scope="col" className="px-6 py-3">
-                  Name
+                  Amount
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Email
+                  Date
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  <span className="sr-only">Edit</span>
+                  Description
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Made by
                 </th>
               </tr>
             </thead>
             <tbody>
-              {members
-                .filter((m) => m.status === "ACTIVE")
-                .map((member, idx) => (
-                  <tr
-                    key={member.id}
-                    className={classNames("border-b", {
-                      "bg-gray-50": idx % 2,
-                      "bg-white": !(idx % 2),
-                    })}
+              {transactions.map((transaction, idx) => (
+                <tr
+                  key={transaction.id}
+                  className={classNames("border-b", {
+                    "bg-gray-50": idx % 2,
+                    "bg-white": !(idx % 2),
+                  })}
+                >
+                  <th
+                    scope="row"
+                    className={classNames(
+                      "px-6 py-4 font-medium whitespace-nowrap",
+                      {
+                        "text-red-500":
+                          transaction.type === TransactionType.WITHDRAWAL,
+                        "text-green-500":
+                          transaction.type === TransactionType.DEPOSIT,
+                      }
+                    )}
                   >
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                    >
-                      {member.name}
-                    </th>
-                    <td className="px-6 py-4">{member.email}</td>
-                    <td className="px-6 py-4 text-right">
-                      <Link
-                        href={`/members/${member.id}`}
-                        className="font-medium text-violet-600 hover:underline"
-                      >
-                        Edit
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+                    {transaction.type === TransactionType.DEPOSIT ? "+" : "-"}{" "}
+                    {formatCurrency(transaction.amount)}
+                  </th>
+                  <td className="px-6 py-4">
+                    {transaction.createdAt.toISOString()}
+                  </td>
+                  <td className="px-6 py-4">{transaction.comment}</td>
+                  <td className="px-6 py-4">{transaction.Actor?.name}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
+        </div>
+        <div>
+          <Pagination pagination={pagination} />
         </div>
       </div>
     </>

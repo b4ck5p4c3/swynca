@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/db";
 import classNames from "classnames";
 import Link from "next/link";
-
-const prisma = new PrismaClient();
 
 export default async function MembersPage() {
   const members = await prisma.member.findMany();

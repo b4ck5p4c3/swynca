@@ -36,7 +36,7 @@ export type CreateWithdrawal = CreateGeneric & {
 export type CreateInput = CreateDeposit | CreateWithdrawal;
 
 export type FindAllOptions = {
-  sortDate?: 'desc' | 'asc',
+  sortDate?: "desc" | "asc";
   pagination?: PaginationProps;
 };
 
@@ -55,8 +55,8 @@ export async function findAll(
       take: options.pagination.pageSize,
       skip: options.pagination.pageNumber * options.pagination.pageSize,
       orderBy: {
-        date: options?.sortDate || 'desc'
-      }
+        date: options?.sortDate || "desc",
+      },
     });
   }
   return prisma.spaceTransaction.findMany({ where });
@@ -71,7 +71,7 @@ export async function create(input: CreateInput): Promise<SpaceTransaction> {
   const transaction = await prisma.spaceTransaction.create({ data: input });
 
   // Perform atomic increment/decrement over space balance
-  prisma.balance.update({
+  const res = await prisma.balance.update({
     where: {
       entityId: BALANCES_SPACE_UUID,
     },
