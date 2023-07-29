@@ -24,9 +24,8 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
   const { refresh } = useRouter();
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
-  const [source, setSource] = useState<
-    SpaceTransactionDeposit | SpaceTransactionWithdrawal
-  >("MAGIC");
+  const [source, setSource] = useState<SpaceTransactionDeposit>("MAGIC");
+  const [target, setTarget] = useState<SpaceTransactionWithdrawal>("MAGIC");
   const submitDisabled = !amount || !description;
 
   const currencySymbol = useMemo(
@@ -42,15 +41,15 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
     let result;
     if (kind === TransactionType.DEPOSIT) {
       result = await deposit({
-        amount: Number(amount.replace(/\,/g, ".")) * 100,
+        amount,
         description,
-        source: source as SpaceTransactionDeposit,
+        source,
       });
     } else {
       result = await withdraw({
-        amount: Number(amount.replace(/\,/g, ".")) * 100,
+        amount,
         description,
-        source: source as SpaceTransactionWithdrawal,
+        target,
       });
     }
 

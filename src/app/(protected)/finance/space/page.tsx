@@ -19,7 +19,7 @@ type SpaceFinancePageParams = {
 export default async function SpaceFinancePage(params: SpaceFinancePageParams) {
   const currentBalance = await getBalance();
   const basicExpenses = await getBasicExpenses();
-  const balanceDifference = currentBalance - basicExpenses;
+  const balanceDifference = currentBalance.sub(basicExpenses);
 
   const count = await prisma.spaceTransaction.count();
   const pagination = getPagination(
@@ -47,24 +47,24 @@ export default async function SpaceFinancePage(params: SpaceFinancePageParams) {
           <div className="flex flex-col gap-2">
             <h3 className="text-gray-600 font-semibold">Current balance</h3>
             <span className="text-5xl font-semibold">
-              {formatCurrency(currentBalance)}
+              {formatCurrency(currentBalance, true)}
             </span>
           </div>
           <div className="flex flex-col gap-2">
             <h3 className="text-gray-600 font-semibold">Basic expenses</h3>
             <span className="text-5xl font-semibold">
-              {formatCurrency(basicExpenses)}
+              {formatCurrency(basicExpenses, true)}
             </span>
           </div>
           <div className="flex flex-col gap-2">
             <h3 className="text-gray-600 font-semibold">Difference</h3>
             <span
               className={classNames("text-5xl font-semibold", {
-                "text-red-500": balanceDifference < 0,
-                "text-green-500": balanceDifference > 0,
+                "text-red-500": balanceDifference.lessThan(0),
+                "text-green-500": balanceDifference.greaterThan(0),
               })}
             >
-              {formatCurrency(balanceDifference)}
+              {formatCurrency(balanceDifference, true)}
             </span>
           </div>
         </div>

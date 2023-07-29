@@ -1,5 +1,3 @@
 export default function MembershipsPage() {
-  return (
-    <div>Memberships</div>
-  )
+  return <div>Memberships</div>;
 }

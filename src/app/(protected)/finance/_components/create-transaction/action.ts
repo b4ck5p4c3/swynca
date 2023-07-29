@@ -2,12 +2,27 @@
 
 import { getServerSession } from "@/lib/auth/wrapper";
 import { create } from "@/lib/space-transactions";
-import {
-  SpaceTransactionDeposit,
-  SpaceTransactionWithdrawal,
-  TransactionType,
-} from "@prisma/client";
+import { Prisma, TransactionType } from "@prisma/client";
 import { revalidateTag } from "next/cache";
+import { Literal, Record, Static, String, Union } from "runtypes";
+
+const MAX_AMOUNT = new Prisma.Decimal(10).pow(10);
+
+const DepositRequest = Record({
+  amount: String,
+  description: String,
+  source: Union(Literal("MAGIC"), Literal("DONATE"), Literal("MEMBERSHIP")),
+});
+
+type DepositRequestType = Static<typeof DepositRequest>;
+
+const WithdrawRequest = Record({
+  amount: String,
+  description: String,
+  target: Union(Literal("MAGIC"), Literal("BASIC"), Literal("PURCHASES")),
+});
+
+type WithdrawRequestType = Static<typeof WithdrawRequest>;
 
 type CreateTransactionResult =
   | {
@@ -19,8 +34,12 @@ type CreateTransactionResult =
       error: string;
     };
 
-const getGenericInputError = (amount: number, description: string) => {
-  if (Number.isNaN(amount) || amount <= 0) {
+const getGenericInputError = (amount: Prisma.Decimal, description: string) => {
+  if (amount.lessThanOrEqualTo(0)) {
+    return "Invalid amount";
+  }
+
+  if (amount.greaterThanOrEqualTo(MAX_AMOUNT)) {
     return "Invalid amount";
   }
 
@@ -31,15 +50,18 @@ const getGenericInputError = (amount: number, description: string) => {
   return null;
 };
 
-export async function deposit({
-  amount,
-  description,
-  source = SpaceTransactionDeposit.MAGIC,
-}: {
-  amount: number;
-  description: string;
-  source: SpaceTransactionDeposit;
-}): Promise<CreateTransactionResult> {
+export async function deposit(
+  request: DepositRequestType
+): Promise<CreateTransactionResult> {
+  if (!DepositRequest.validate(request).success) {
+    return {
+      success: false,
+      error: "Wrong request format",
+    };
+  }
+
+  const { amount, description, source } = request;
+
   const session = await getServerSession();
   if (!session) {
     return {
@@ -48,7 +70,17 @@ export async function deposit({
     };
   }
 
-  const inputError = getGenericInputError(amount, description);
+  let decimalAmount: Prisma.Decimal;
+  try {
+    decimalAmount = new Prisma.Decimal(amount).toDecimalPlaces(2);
+  } catch (e) {
+    return {
+      success: false,
+      error: "Invalid amount format",
+    };
+  }
+
+  const inputError = getGenericInputError(decimalAmount, description);
   if (inputError) {
     return {
       success: false,
@@ -57,7 +89,7 @@ export async function deposit({
   }
 
   await create({
-    amount,
+    amount: decimalAmount,
     type: TransactionType.DEPOSIT,
     source,
     actorId: session.user.id,
@@ -68,15 +100,18 @@ export async function deposit({
   return { success: true };
 }
 
-export async function withdraw({
-  amount,
-  description,
-  source = SpaceTransactionWithdrawal.MAGIC,
-}: {
-  amount: number;
-  description: string;
-  source: SpaceTransactionWithdrawal;
-}): Promise<CreateTransactionResult> {
+export async function withdraw(
+  request: WithdrawRequestType
+): Promise<CreateTransactionResult> {
+  if (!WithdrawRequest.validate(request).success) {
+    return {
+      success: false,
+      error: "Wrong request format",
+    };
+  }
+
+  const { amount, description, target } = request;
+
   const session = await getServerSession();
   if (!session) {
     return {
@@ -85,7 +120,17 @@ export async function withdraw({
     };
   }
 
-  const inputError = getGenericInputError(amount, description);
+  let decimalAmount: Prisma.Decimal;
+  try {
+    decimalAmount = new Prisma.Decimal(amount).toDecimalPlaces(2);
+  } catch (e) {
+    return {
+      success: false,
+      error: "Invalid amount format",
+    };
+  }
+
+  const inputError = getGenericInputError(decimalAmount, description);
   if (inputError) {
     return {
       success: false,
@@ -94,11 +139,9 @@ export async function withdraw({
   }
 
   await create({
-    amount,
+    amount: decimalAmount,
     type: TransactionType.WITHDRAWAL,
-    // @ts-expect-error Some sort of weird Prisma behavior.
-    // For WITHDRAWAL transaction it requires a "sourcew" field instead of "source"
-    source: source,
+    target: target,
     actorId: session.user.id,
     comment: description,
   });

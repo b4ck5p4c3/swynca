@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 const TIMEZONE = process.env.SWYNCA_TZ || "Etc/ETC";
 const LOCALE = process.env.NEXT_PUBLIC_SWYNCA_LOCALE || "en-US";
 const CURRENCY = process.env.NEXT_PUBLIC_SWYNCA_CURRENCY || "USD";
@@ -7,10 +9,20 @@ const dateTimeFormat = new Intl.DateTimeFormat(LOCALE);
 const currencyFormat = new Intl.NumberFormat(LOCALE, {
   style: "currency",
   currency: CURRENCY,
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+  currencyDisplay: "narrowSymbol",
+});
+const shortCurrencyFormat = new Intl.NumberFormat(LOCALE, {
+  style: "currency",
+  currency: CURRENCY,
   maximumFractionDigits: 0,
   currencyDisplay: "narrowSymbol",
 });
 
-export function formatCurrency(cents: number): string {
-  return currencyFormat.format(cents / 100);
+export function formatCurrency(cents: Prisma.Decimal, short?: boolean): string {
+  if (short) {
+    return shortCurrencyFormat.format(cents.toNumber());
+  }
+  return currencyFormat.format(cents.toNumber());
 }

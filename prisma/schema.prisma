@@ -63,14 +63,14 @@ model ExternalAuthenticationOry {
 }
 
 model Balance {
-  entityId String @id @unique
-  amount   Int
+  entityId String  @id @unique
+  amount   Decimal @db.Decimal(18, 2)
 }
 
 model SpaceTransaction {
   id      String          @id @default(uuid())
   type    TransactionType
-  amount  Int
+  amount  Decimal         @db.Decimal(18, 2)
   comment String?
   date    DateTime        @default(now())
 
