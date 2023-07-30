@@ -20,9 +20,9 @@ const shortCurrencyFormat = new Intl.NumberFormat(LOCALE, {
   currencyDisplay: "narrowSymbol",
 });
 
-export function formatCurrency(cents: Prisma.Decimal, short?: boolean): string {
+export function formatCurrency(amount: Prisma.Decimal, short?: boolean): string {
   if (short) {
-    return shortCurrencyFormat.format(cents.toNumber());
+    return shortCurrencyFormat.format(amount.toNumber());
   }
-  return currencyFormat.format(cents.toNumber());
+  return currencyFormat.format(amount.toNumber());
 }

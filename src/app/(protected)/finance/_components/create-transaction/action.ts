@@ -11,6 +11,7 @@ const MAX_AMOUNT = new Prisma.Decimal(10).pow(10);
 const DepositRequest = Record({
   amount: String,
   description: String,
+  // @todo use Prisma generated type instead
   source: Union(Literal("MAGIC"), Literal("DONATE"), Literal("MEMBERSHIP")),
 });
 
@@ -19,6 +20,7 @@ type DepositRequestType = Static<typeof DepositRequest>;
 const WithdrawRequest = Record({
   amount: String,
   description: String,
+  // @todo use Prisma generated type instead
   target: Union(Literal("MAGIC"), Literal("BASIC"), Literal("PURCHASES")),
 });
 

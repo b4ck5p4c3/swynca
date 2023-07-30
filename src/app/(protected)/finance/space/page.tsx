@@ -6,12 +6,11 @@ import CreateTransactionButton from "../_components/create-transaction/button";
 import Pagination from "./pagination";
 import { getPagination } from "@/lib/utils/pagination";
 import { TransactionType } from "@prisma/client";
-import { cache } from "react";
 
-const TRANSACTIONS_PER_PAGE = 1;
+const TRANSACTIONS_PER_PAGE = 100;
 
 type SpaceFinancePageParams = {
-  query: {
+  searchParams: {
     page: string;
   };
 };
@@ -23,7 +22,7 @@ export default async function SpaceFinancePage(params: SpaceFinancePageParams) {
 
   const count = await prisma.spaceTransaction.count();
   const pagination = getPagination(
-    params.query?.page,
+    params.searchParams?.page,
     TRANSACTIONS_PER_PAGE,
     count
   );
@@ -45,13 +44,13 @@ export default async function SpaceFinancePage(params: SpaceFinancePageParams) {
         </div>
         <div className="relative overflow-x-auto shadow-lg sm:rounded-lg p-8 flex flex-col md:flex-row gap-8 md:gap-0 justify-between">
           <div className="flex flex-col gap-2">
-            <h3 className="text-gray-600 font-semibold">Current balance</h3>
+            <h3 className="text-gray-600 font-semibold">Available</h3>
             <span className="text-5xl font-semibold">
               {formatCurrency(currentBalance, true)}
             </span>
           </div>
           <div className="flex flex-col gap-2">
-            <h3 className="text-gray-600 font-semibold">Basic expenses</h3>
+            <h3 className="text-gray-600 font-semibold">Required</h3>
             <span className="text-5xl font-semibold">
               {formatCurrency(basicExpenses, true)}
             </span>
