@@ -12,18 +12,19 @@ async function getKeys() {
       key: true,
       member: {
         select: {
-          username: true,
+          id: true,
         },
       },
     },
   });
+  console.log(keys);
 
   const uids = keys
     .filter(({ type }) => type === KeyType.UID)
-    .map(({ key, member: { username } }) => ({ [key]: username }));
+    .map(({ key, member: { id } }) => ({ [key]: id }));
   const pans = keys
     .filter(({ type }) => type === KeyType.PAN)
-    .map(({ key, member: { username } }) => ({ [key]: username }));
+    .map(({ key, member: { id } }) => ({ [key]: id }));
 
   const entities = {
     uids,
