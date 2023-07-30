@@ -1,4 +1,4 @@
-import { getRequiredEnv } from "@/lib/utils";
+import { getRequiredEnv } from "@/lib/utils/env";
 import { KeyType, PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -48,7 +48,7 @@ async function getLastModifyDate() {
 
 export async function GET(request: Request) {
   const token = request.headers.get("authorization");
-  if (token === getRequiredEnv("ACS_TOKEN")) {
+  if (token === getRequiredEnv("ACS_SERVICE_ACCOUNT_TOKEN")) {
     const date = await getLastModifyDate();
     const etag = request.headers.get("Etag");
     if (date === etag) {
