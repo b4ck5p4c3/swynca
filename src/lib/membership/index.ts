@@ -5,9 +5,22 @@ const prisma = new PrismaClient();
 export async function fetchAll(): Promise<Membership[]> {
   return prisma.membership.findMany({
     orderBy: {
-      id: 'asc'
-    }
+      id: "asc",
+    },
   });
+}
+
+export async function exists(id: string): Promise<boolean> {
+  return (
+    (await prisma.membership.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+    })) != null
+  );
 }
 
 export async function create({

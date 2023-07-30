@@ -121,7 +121,7 @@ model Membership {
 
 model MembershipSubscription {
   id           String     @id @unique @default(uuid())
-  subscribedAt DateTime
+  subscribedAt DateTime   @default(now())
   declinedAt   DateTime?
   membershipId String
   membership   Membership @relation(fields: [membershipId], references: [id])

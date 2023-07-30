@@ -1,11 +1,40 @@
-import { Member, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export function fetch(id: string): Promise<Member | null> {
-    return prisma.member.findFirst({
+export function fetch(id: string) {
+  return prisma.member.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      MembershipSubscriptionHistory: {
+        include: {
+          membership: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
         where: {
-            id
-        }
-    });
+          declinedAt: null,
+        },
+      },
+      ACSKey: true,
+    },
+  });
+}
+
+export async function exists(id: string): Promise<boolean> {
+  return (
+    (await prisma.member.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+    })) != null
+  );
 }

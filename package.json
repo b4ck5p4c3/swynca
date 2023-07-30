@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
     "@ory/kratos-client": "^0.13.1",
     "@prisma/client": "^4.13.0",
     "@types/node": "20.1.0",
