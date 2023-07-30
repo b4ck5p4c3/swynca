@@ -27,7 +27,8 @@
     "runtypes": "^6.7.0",
     "sass": "^1.62.1",
     "ts-node": "^10.9.1",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",

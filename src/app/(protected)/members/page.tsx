@@ -1,11 +1,64 @@
-import { prisma } from "@/lib/db";
+import {MemberStatuses, PrismaClient} from "@prisma/client";
 import classNames from "classnames";
 import Link from "next/link";
+import React from "react";
+import OryAccountManagement from "@/lib/integrations/ory/account-management";
+
+const prisma = new PrismaClient();
+
+async function updateMemberStatus(id: string, status: MemberStatuses) : Promise<boolean> {
+  const member = await prisma.member.findUnique({where: {id}});
+  const relationRecord = await prisma.externalAuthenticationOry.findUnique({where:{memberId: id}});
+  const ident = new OryAccountManagement();
+  if (!member || !relationRecord) {
+    return false;
+  }
+  ident.setTraits(member.name, member.email);
+  try {
+    if (status === MemberStatuses.FROZEN) {
+      await ident.disable(relationRecord.oryId);
+      await prisma.member.update({where: {id}, data: {status: MemberStatuses.FROZEN}});
+    } else {
+      await ident.enable(relationRecord.oryId);
+      await prisma.member.update({where: {id}, data: {status: MemberStatuses.ACTIVE}});
+    }
+  } catch (e: any) {
+    console.log('updateMemberStatus error', e.response.data);
+    return false;
+  }
+  return true;
+}
+
+async function disable(data: FormData) {
+  'use server'
+  await updateMemberStatus(data.get('id') as string, MemberStatuses.FROZEN);
+}
+
+async function enable(data: FormData) {
+  'use server'
+  await updateMemberStatus(data.get('id') as string, MemberStatuses.ACTIVE);
+}
 
 export default async function MembersPage() {
   const members = await prisma.member.findMany();
   return (
     <div className="flex flex-col gap-8">
+      <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
+        <div className="w-full text-sm text-left text-gray-500">
+          <div className="p-5 text-lg font-semibold text-left text-gray-900 bg-white">
+            Actions
+          </div>
+          <div className="text-xs text-gray-700 uppercase bg-gray-200">
+            <Link
+                href={`/members/add`}
+                className="px-6 py-4 text-right"
+            >
+              Add
+            </Link>
+            <button className="px-6 py-4 text-right">Delete</button>
+          </div>
+        </div>
+      </div>
       <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
         <table className="w-full text-sm text-left text-gray-500">
           <caption className="p-5 text-lg font-semibold text-left text-gray-900 bg-white">
@@ -29,6 +82,7 @@ export default async function MembersPage() {
             </tr>
           </thead>
           <tbody>
+
             {members
               .filter((m) => m.status === "ACTIVE")
               .map((member, idx) => (
@@ -46,6 +100,12 @@ export default async function MembersPage() {
                     {member.name}
                   </th>
                   <td className="px-6 py-4">{member.email}</td>
+                  <td className="px-6 py-4 text-right">
+                    <form action={disable}>
+                      <input type="hidden" name="id" value={member.id} />
+                      <button type="submit">Disable</button>
+                    </form>
+                  </td>
                   <td className="px-6 py-4 text-right">
                     <Link
                       href={`/members/${member.id}`}
@@ -99,6 +159,14 @@ export default async function MembersPage() {
                     {member.name}
                   </th>
                   <td className="px-6 py-4">{member.email}</td>
+                  <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-4 text-right">
+                      <form action={enable}>
+                        <input type="hidden" name="id" value={member.id} />
+                        <button type="submit">Enable</button>
+                      </form>
+                    </td>
+                  </td>
                   <td className="px-6 py-4 text-right">
                     <Link
                       href={`/members/${member.id}`}
