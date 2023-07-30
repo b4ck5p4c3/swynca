@@ -8,25 +8,21 @@ import {
   TransactionType,
 } from "@prisma/client";
 import classNames from "classnames";
-import { deposit, withdraw } from "./action";
+import { add } from "./action";
 
-export type CreateTransactionModalProps = {
-  kind: TransactionType;
-  visible?: boolean;
-  onClose?: () => void;
+export type CreateMembershipProps = {
+  visible: boolean;
+  onClose: () => void;
 };
 
-const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
-  kind,
+function CreateMembershipModal({
   visible,
   onClose,
-}) => {
+}: CreateMembershipProps) {
   const { refresh } = useRouter();
+  const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
-  const [description, setDescription] = useState("");
-  const [source, setSource] = useState<SpaceTransactionDeposit>("MAGIC");
-  const [target, setTarget] = useState<SpaceTransactionWithdrawal>("MAGIC");
-  const submitDisabled = !amount || !description;
+  const submitDisabled = !amount || !title;
 
   const currencySymbol = useMemo(
     () =>
@@ -37,23 +33,11 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
     []
   );
 
-  const makeTransaction = async () => {
-    let result;
-    if (kind === TransactionType.DEPOSIT) {
-      result = await deposit({
-        amount,
-        description,
-        source,
-      });
-    } else {
-      result = await withdraw({
-        amount,
-        description,
-        target,
-      });
-    }
-
-    console.log("hello", result);
+  const addMembership = async () => {
+    const result = await add({
+      title,
+      amount,
+    });
 
     if (!result.success) {
       console.error(result);
@@ -61,7 +45,7 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
     }
 
     refresh();
-    onClose?.();
+    onClose();
   };
 
   if (!visible) {
@@ -77,11 +61,18 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
       <div className="relative top-20 mx-auto p-5 border max-w-lg w-4/5 shadow-lg rounded-md bg-white gap-4">
         <div className="flex flex-col gap-4">
           <h2 className="lg:text-2xl text-xl font-medium text-gray-900">
-            {kind === TransactionType.DEPOSIT
-              ? "Depositing to ✨"
-              : "Withdrawing from ✨"}
+            Add new membership
           </h2>
           <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold text-gray-600">Title</span>
+              <textarea
+                placeholder="Membership title"
+                className="w-full rounded border border-gray-200 p-3"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
             <div className="flex flex-col gap-1">
               <span className="font-semibold text-gray-600">Amount</span>
               <div className="flex gap-2 items-center">
@@ -99,15 +90,6 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
                 <span className="text-3xl">{currencySymbol}</span>
               </div>
             </div>
-            <div className="flex flex-col gap-1">
-              <span className="font-semibold text-gray-600">Description</span>
-              <textarea
-                placeholder="Transaction concept"
-                className="w-full rounded border border-gray-200 p-3"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
           </div>
 
           <div className="items-center flex flex-row gap-4">
@@ -115,24 +97,21 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
               className={classNames(
                 "px-4 py-2 text-white text-base font-medium rounded-md w-full shadow-sm",
                 {
-                  ["bg-red-500 hover:bg-red-600"]:
-                    kind === TransactionType.WITHDRAWAL,
-                  ["bg-green-500 hover:bg-green-600"]:
-                    kind === TransactionType.DEPOSIT,
+                  ["bg-green-500 hover:bg-green-600"]: !submitDisabled,
                   ["bg-gray-400 cursor-not-allowed hover:bg-gray-400"]:
                     submitDisabled,
                 }
               )}
               disabled={submitDisabled}
-              onClick={makeTransaction}
+              onClick={addMembership}
             >
-              {kind === TransactionType.DEPOSIT ? "Deposit" : "Withdraw"}
+              Add
             </button>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default CreateTransactionModal;
+export default CreateMembershipModal;

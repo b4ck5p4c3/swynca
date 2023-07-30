@@ -89,3 +89,10 @@ model SpaceTransaction {
 
   Actor Member? @relation(fields: [actorId], references: [id])
 }
+
+model Membership {
+  id     String  @id @unique @default(uuid())
+  title  String
+  amount Decimal @db.Decimal(18, 2)
+  active Boolean
+}
