@@ -121,4 +121,9 @@ export default class OryAccountManagement
     });
     return identityToAccount(result.data);
   }
+
+  async deleteAccount(id: string): Promise<boolean> {
+    const result = await this.api.deleteIdentity({id: id});
+    return result.status === 204;
+  }
 }
