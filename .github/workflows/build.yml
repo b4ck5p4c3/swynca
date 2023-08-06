@@ -26,3 +26,6 @@ jobs:
           file: node.prod.dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm/v7,darwin,darwin/arm64
           push: true
+          tags: 
+            - latest
+            - ${{ github.sha }}
