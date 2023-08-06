@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+   node:
+    container_name: "swynca"
+    build:
+      context: ./
+      dockerfile: node.prod.dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    external: true

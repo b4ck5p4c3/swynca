@@ -2,19 +2,8 @@ import { formatCurrency } from "@/lib/locale";
 import classNames from "classnames";
 import { fetchAll } from "lib/membership";
 import CreateMembershipButton from "./_components/create-membership/button";
-import EditMembershipButton, {
-  MembershipDTO,
-} from "./_components/edit-membership/button";
-import { Membership } from "@prisma/client";
-
-export function convertToMembershipDTO(membership: Membership): MembershipDTO {
-  return {
-    id: membership.id,
-    title: membership.title,
-    amount: membership.amount.toString(),
-    active: membership.active,
-  };
-}
+import EditMembershipButton from "./_components/edit-membership/button";
+import convertToMembershipDTO from "./_components/edit-membership/utils";
 
 export default async function MembershipsPage() {
   const memberships = await fetchAll();

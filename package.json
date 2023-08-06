@@ -20,7 +20,7 @@
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.1",
     "minimist": "^1.2.8",
-    "next": "^13.4.2",
+    "next": "^13.4.8",
     "next-auth": "^4.22.1",
     "preline": "^1.8.0",
     "react": "18.2.0",
