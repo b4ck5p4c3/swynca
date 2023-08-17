@@ -1,8 +1,9 @@
-import {MemberStatuses, PrismaClient} from "@prisma/client";
+import {Member, MemberStatuses, PrismaClient} from "@prisma/client";
 import classNames from "classnames";
 import Link from "next/link";
 import React from "react";
 import OryAccountManagement from "@/lib/integrations/ory/account-management";
+import {redirect} from "next/navigation";
 
 const prisma = new PrismaClient();
 
@@ -29,14 +30,35 @@ async function updateMemberStatus(id: string, status: MemberStatuses) : Promise<
   return true;
 }
 
+async function deleteMember(data: FormData) {
+  'use server'
+  const id = data.get('id') as string;
+  const ident = new OryAccountManagement();
+  try {
+    const relationRecord = await prisma.externalAuthenticationOry.findUnique({where:{memberId: id}});
+    if (relationRecord !== null) {
+      await ident.deleteAccount(relationRecord.oryId);
+      await prisma.externalAuthenticationOry.delete({where: {memberId: id}});
+      //todo: add any other related records here or use cascade delete
+      await prisma.member.delete({where: {id: id}});
+    }
+  } catch (e: any) {
+    const errorData = e?.response?.data;
+    console.log('deleteMember error ', errorData ? errorData : e);
+  }
+  redirect('/members');
+}
+
 async function disable(data: FormData) {
   'use server'
   await updateMemberStatus(data.get('id') as string, MemberStatuses.FROZEN);
+  redirect('/members');
 }
 
 async function enable(data: FormData) {
   'use server'
   await updateMemberStatus(data.get('id') as string, MemberStatuses.ACTIVE);
+  redirect('/members');
 }
 
 export default async function MembersPage() {
@@ -55,7 +77,6 @@ export default async function MembersPage() {
             >
               Add
             </Link>
-            <button className="px-6 py-4 text-right">Delete</button>
           </div>
         </div>
       </div>
@@ -104,6 +125,12 @@ export default async function MembersPage() {
                     <form action={disable}>
                       <input type="hidden" name="id" value={member.id} />
                       <button type="submit">Disable</button>
+                    </form>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <form action={deleteMember}>
+                      <input type="hidden" name="id" value={member.id} />
+                      <button type="submit">Delete</button>
                     </form>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -160,12 +187,16 @@ export default async function MembersPage() {
                   </th>
                   <td className="px-6 py-4">{member.email}</td>
                   <td className="px-6 py-4 text-right">
-                    <td className="px-6 py-4 text-right">
-                      <form action={enable}>
-                        <input type="hidden" name="id" value={member.id} />
-                        <button type="submit">Enable</button>
-                      </form>
-                    </td>
+                    <form action={enable}>
+                      <input type="hidden" name="id" value={member.id} />
+                      <button type="submit">Enable</button>
+                    </form>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <form action={deleteMember}>
+                      <input type="hidden" name="id" value={member.id} />
+                      <button type="submit">Delete</button>
+                    </form>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <Link
