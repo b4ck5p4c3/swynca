@@ -60,6 +60,7 @@ model Member {
   SpaceTransaction              SpaceTransaction[]
   ACSKey                        ACSKey[]
   MembershipSubscriptionHistory MembershipSubscription[]
+  TelegramMetadata              TelegramMetadata[]
 }
 
 model ACSKey {
@@ -128,4 +129,12 @@ model MembershipSubscription {
   membership   Membership @relation(fields: [membershipId], references: [id])
   memberId     String
   member       Member     @relation(fields: [memberId], references: [id])
+}
+
+model TelegramMetadata {
+  id           String  @id @unique @default(uuid())
+  memberId     String  @unique
+  telegramId   String  @unique
+  telegramName String?
+  Member       Member  @relation(fields: [memberId], references: [id])
 }
