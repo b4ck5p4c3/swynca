@@ -16,8 +16,7 @@ export async function GET(request: Request) {
  tm."telegramId" from "SpaceTransaction" st
 left join "Member" m on m.id = st."actorId" and m.id is not null
 left join "TelegramMetadata" tm on tm."memberId" = m.id and m.id is not null
-group by tm."telegramId"
-  limit $1 offset $2) t where t.balance < 0`;
+group by tm."telegramId") t where t.balance < 0 limit $1 offset $2`;
         const debtData = await prisma.$queryRawUnsafe<DebtData[]>(query, [limit, offset]);
         console.log(debtData);
         if (debtData === null) {
