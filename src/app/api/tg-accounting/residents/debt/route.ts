@@ -1,4 +1,4 @@
-import {NextResponse} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import { PrismaClient } from '@prisma/client'
 import authorizedOnlyRequest from "@/lib/auth/telegram-bot-api";
 
@@ -8,12 +8,10 @@ type DebtData = {
     debt: number
 };
 
-async function getUsersWithNegativeBalance(request: Request) {
-    const url = new URL(request.url);
-    const searchParams = new URLSearchParams(url.search);
+async function getUsersWithNegativeBalance(request: NextRequest) {
     const prisma = new PrismaClient();
-    const limit = Number.parseInt(searchParams?.get("limit") || '100');
-    const offset = Number.parseInt(searchParams?.get("offset") || '0');
+    const limit = Number.parseInt(request.nextUrl.searchParams.get("limit") || '100');
+    const offset = Number.parseInt(request.nextUrl.searchParams.get("offset") || '0');
     const query = `select * from (select (sum(st.amount) filter ( where st.type = 'DEPOSIT' ) - sum(st.amount) filter ( where st.type = 'WITHDRAWAL' )) as debt,
  tm."telegramId" as id, tm."telegramName" as username from "SpaceTransaction" st
 left join "Member" m on m.id = st."actorId" and m.id is not null

@@ -3,9 +3,9 @@ export function isAuthorized(req: Request) : boolean {
     return authToken === process.env.TELEGRAM_BOT_BEARER_TOKEN;
 }
 
-export default async function authorizedOnlyRequest(request: Request, requestProcessor: Function) {
+export default async function authorizedOnlyRequest(request: Request, requestProcessor: Function, params = {}) {
     if (isAuthorized(request)) {
-        return requestProcessor(request);
+        return requestProcessor(request, params);
     } else {
         return new Response(JSON.stringify({ code: 401, message: 'Unauthorized'}), { status: 401 });
     }
