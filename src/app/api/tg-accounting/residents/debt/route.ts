@@ -21,9 +21,6 @@ left join "TelegramMetadata" tm on tm."memberId" = m.id and m.id is not null
 group by tm."telegramId", tm."telegramName") t where t.debt < 0 limit $1 offset $2`;
     const debtData = await prisma.$queryRawUnsafe<DebtData[]>(query, limit, offset);
     console.log(debtData);
-    if (debtData === null) {
-        return NextResponse.json({code: 404, message: 'Not found'});
-    }
     return NextResponse.json(debtData);
 }
 

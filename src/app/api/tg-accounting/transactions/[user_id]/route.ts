@@ -22,9 +22,6 @@ left join "Member" m on st."actorId" = m.id
 left join "TelegramMetadata" tm on m.id = tm."memberId"
 where m.id is not null limit $1 offset $2`;
     const transactions = await prisma.$queryRawUnsafe<TransactionData[]>(query, limit, offset);
-    if (transactions === null) {
-        return NextResponse.json({code: 404, message: 'Not found'});
-    }
     return NextResponse.json(transactions);
 }
 
