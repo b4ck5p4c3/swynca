@@ -5,10 +5,7 @@ const nextConfig = {
   images: {
     domains: ["s.gravatar.com"],
   },
-  experimental: {
-    appDir: true,
-    serverActions: true,
-  },
+  experimental: {},
 };
 
 module.exports = nextConfig;

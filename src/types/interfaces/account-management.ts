@@ -6,6 +6,7 @@ export interface AccountDTO {
   email: string;
   name: string;
   active: boolean;
+  password: string;
 }
 
 /**
@@ -23,12 +24,26 @@ export interface AccountCreateDTO {
 export interface AccountPatchDTO {
   email?: string;
   name?: string;
+  password?: string;
 }
 
 /**
  * Account Management interface for external integrations
  */
 export interface IntegrationAccountManagement {
+  /**
+   * Finds an External Account ID by internal Member ID
+   * @param memberId Member ID on our side
+   */
+  getExternalId(memberId: string): Promise<string | undefined>;
+
+  /**
+   * Binds an External Account ID to internal Member ID
+   * @param memberId Member ID on our side
+   * @param externalId External (SSO) Account ID
+   */
+  bind(memberId: string, externalId: string): Promise<void>;
+
   /**
    * Finds an Account by its ID
    * @param id Account ID in integration

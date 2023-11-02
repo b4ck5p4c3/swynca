@@ -20,21 +20,25 @@ export type OryProfile = {
   sub: string;
 };
 
-const OryProviderFactory = (): OAuthConfig<OryProfile> => {
+const LogtoProviderFactory = (): OAuthConfig<OryProfile> => {
   return {
     type: "oauth",
-    name: "Ory",
-    id: "ory",
-    wellKnown: getRequiredEnv("ORY_OAUTH_WELL_KNOWN"),
+    name: "Logto",
+    id: "logto",
+    wellKnown: getRequiredEnv("LOGTO_WELL_KNOWN"),
     authorization: { params: { grant_type: "authorization_code" } },
+    client: {
+      authorization_signed_response_alg: 'ES384',
+      id_token_signed_response_alg: 'ES384'
+    },
     idToken: true,
     checks: ["pkce", "state"],
-    clientId: getRequiredEnv("ORY_OAUTH_CLIENT_ID"),
-    clientSecret: getRequiredEnv("ORY_OAUTH_CLIENT_SECRET"),
+    clientId: getRequiredEnv("LOGTO_CLIENT_ID"),
+    clientSecret: getRequiredEnv("LOGTO_CLIENT_SECRET"),
     profile: async (data) => {
-      const memberBound = await prisma.externalAuthenticationOry.findFirst({
+      const memberBound = await prisma.externalAuthenticationLogto.findFirst({
         where: {
-          oryId: data.sub,
+          logtoId: data.sub,
         },
         include: {
           member: true,
@@ -52,4 +56,4 @@ const OryProviderFactory = (): OAuthConfig<OryProfile> => {
   };
 };
 
-export default OryProviderFactory;
+export default LogtoProviderFactory;

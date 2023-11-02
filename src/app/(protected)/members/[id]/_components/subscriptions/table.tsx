@@ -5,11 +5,11 @@ import { SubscriptionsHistoryLink } from "./history/link";
 import classNames from "classnames";
 import { UnsubscribeButton } from "./unsubscribe/button";
 import { formatCurrency } from "@/lib/locale";
+import { getAll } from "@/lib/membership";
 
-export function SubscriptionsTable({
+export async function SubscriptionsTable({
   subscriptions,
   memberId,
-  memberships,
 }: {
   subscriptions: (MembershipSubscription & {
     membership: {
@@ -18,12 +18,9 @@ export function SubscriptionsTable({
     };
   })[];
   memberId: string;
-  memberships: {
-    id: string;
-    title: string;
-    amount: Prisma.Decimal;
-  }[];
 }) {
+  const memberships = await getAll();
+
   return (
     <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
       <div className="flex justify-between p-5 items-center">

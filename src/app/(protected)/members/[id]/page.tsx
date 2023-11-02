@@ -1,27 +1,42 @@
 import React from "react";
 import Image from "next/image";
-import { fetch } from "@/lib/member";
-import { MemberStatuses, TransactionType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "@/lib/auth/wrapper";
-import { MemberPropertyText } from "./_components/properties/text";
 import { MemberProperties } from "./_components/properties/properties";
-import classNames from "classnames";
-import { formatCurrency } from "@/lib/locale";
-import CreateTransactionButton from "../../finance/_components/create-transaction/button";
 import { SubscriptionsTable } from "./_components/subscriptions/table";
 import { ACSKeyTable } from "./_components/acs/table";
-import { TransactionsTable } from "./_components/transactions/table";
-import { fetchAll } from "lib/membership";
+import { notFound } from "next/navigation";
 
 async function MemberPage(props: { params: { id: string } }) {
-  const member = await fetch(props.params.id);
+  const prisma = new PrismaClient();
   const session = await getServerSession();
 
-  if (member == null) {
-    return null;
-  }
+  const id = props.params.id;
+  const member = await prisma.member.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      MembershipSubscriptionHistory: {
+        include: {
+          membership: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+        where: {
+          declinedAt: null,
+        },
+      },
+      ACSKey: true,
+    },
+  });
 
-  const memberships = await fetchAll();
+  if (member == null) {
+    notFound();
+  }
 
   const canEdit = session?.user?.id === props.params.id;
 
@@ -56,7 +71,6 @@ async function MemberPage(props: { params: { id: string } }) {
             <SubscriptionsTable
               subscriptions={member.MembershipSubscriptionHistory}
               memberId={member.id}
-              memberships={memberships}
             />
           </div>
           <div>

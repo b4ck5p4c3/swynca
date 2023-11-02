@@ -1,64 +1,62 @@
-import {Member, MemberStatuses, PrismaClient} from "@prisma/client";
+import { Member, MemberStatuses, PrismaClient } from "@prisma/client";
 import classNames from "classnames";
 import Link from "next/link";
 import React from "react";
-import OryAccountManagement from "@/lib/integrations/ory/account-management";
-import {redirect} from "next/navigation";
+import { AccountManagement } from "@/lib/auth/provider";
+import { redirect } from "next/navigation";
 
 const prisma = new PrismaClient();
 
-async function updateMemberStatus(id: string, status: MemberStatuses) : Promise<boolean> {
-  const member = await prisma.member.findUnique({where: {id}});
-  const relationRecord = await prisma.externalAuthenticationOry.findUnique({where:{memberId: id}});
-  const ident = new OryAccountManagement();
-  if (!member || !relationRecord) {
-    return false;
+async function updateMemberStatus(
+  id: string,
+  status: MemberStatuses
+): Promise<void> {
+  const management = new AccountManagement();
+  const member = await prisma.member.findUnique({ where: { id } });
+  if (!member) {
+    throw new Error(`Member with ID ${id} is not found`);
   }
-  ident.setTraits(member.name, member.email);
-  try {
-    if (status === MemberStatuses.FROZEN) {
-      await ident.disable(relationRecord.oryId);
-      await prisma.member.update({where: {id}, data: {status: MemberStatuses.FROZEN}});
-    } else {
-      await ident.enable(relationRecord.oryId);
-      await prisma.member.update({where: {id}, data: {status: MemberStatuses.ACTIVE}});
-    }
-  } catch (e: any) {
-    console.log('updateMemberStatus error', e.response.data);
-    return false;
-  }
-  return true;
-}
 
-async function deleteMember(data: FormData) {
-  'use server'
-  const id = data.get('id') as string;
-  const ident = new OryAccountManagement();
-  try {
-    const relationRecord = await prisma.externalAuthenticationOry.findUnique({where:{memberId: id}});
-    if (relationRecord !== null) {
-      await ident.deleteAccount(relationRecord.oryId);
-      await prisma.externalAuthenticationOry.delete({where: {memberId: id}});
-      //todo: add any other related records here or use cascade delete
-      await prisma.member.delete({where: {id: id}});
-    }
-  } catch (e: any) {
-    const errorData = e?.response?.data;
-    console.log('deleteMember error ', errorData ? errorData : e);
+  const externalId = await management.getExternalId(member.id);
+  if (!externalId) {
+    throw new Error(`Can't find external account for Member ${id}`);
   }
-  redirect('/members');
+
+  switch (status) {
+    case MemberStatuses.ACTIVE:
+      await management.enable(externalId);
+      break;
+    case MemberStatuses.FROZEN:
+      await management.disable(externalId);
+      break;
+  }
+
+  await prisma.member.update({
+    where: { id },
+    data: { status },
+  });
 }
 
 async function disable(data: FormData) {
-  'use server'
-  await updateMemberStatus(data.get('id') as string, MemberStatuses.FROZEN);
-  redirect('/members');
+  "use server";
+  const id = data.get("id");
+  if (!id) {
+    throw new Error("Member ID is not provided");
+  }
+
+  await updateMemberStatus(id as string, MemberStatuses.FROZEN);
+  redirect("/members");
 }
 
 async function enable(data: FormData) {
-  'use server'
-  await updateMemberStatus(data.get('id') as string, MemberStatuses.ACTIVE);
-  redirect('/members');
+  "use server";
+  const id = data.get("id");
+  if (!id) {
+    throw new Error("Member ID is not provided");
+  }
+
+  await updateMemberStatus(id as string, MemberStatuses.ACTIVE);
+  redirect("/members");
 }
 
 export default async function MembersPage() {
@@ -71,10 +69,7 @@ export default async function MembersPage() {
             Actions
           </div>
           <div className="text-xs text-gray-700 uppercase bg-gray-200">
-            <Link
-                href={`/members/add`}
-                className="px-6 py-4 text-right"
-            >
+            <Link href={`/members/add`} className="px-6 py-4 text-right">
               Add
             </Link>
           </div>
@@ -103,7 +98,6 @@ export default async function MembersPage() {
             </tr>
           </thead>
           <tbody>
-
             {members
               .filter((m) => m.status === "ACTIVE")
               .map((member, idx) => (
@@ -125,12 +119,6 @@ export default async function MembersPage() {
                     <form action={disable}>
                       <input type="hidden" name="id" value={member.id} />
                       <button type="submit">Disable</button>
-                    </form>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <form action={deleteMember}>
-                      <input type="hidden" name="id" value={member.id} />
-                      <button type="submit">Delete</button>
                     </form>
                   </td>
                   <td className="px-6 py-4 text-right">
