@@ -6,7 +6,6 @@ export interface AccountDTO {
   email: string;
   name: string;
   active: boolean;
-  password: string;
 }
 
 /**
@@ -15,7 +14,9 @@ export interface AccountDTO {
 export interface AccountCreateDTO {
   email: string;
   name: string;
+  username: string;
   active?: boolean;
+  password?: string;
 }
 
 /**
@@ -35,7 +36,7 @@ export interface IntegrationAccountManagement {
    * Finds an External Account ID by internal Member ID
    * @param memberId Member ID on our side
    */
-  getExternalId(memberId: string): Promise<string | undefined>;
+  getExternalId(memberId: string): Promise<string | null>;
 
   /**
    * Binds an External Account ID to internal Member ID
@@ -49,7 +50,7 @@ export interface IntegrationAccountManagement {
    * @param id Account ID in integration
    * @returns External account, or "undefined" if not found
    */
-  findAccountById(id: string): Promise<AccountDTO | undefined>;
+  findAccountById(id: string): Promise<AccountDTO | null>;
 
   /**
    * Creates a new account
