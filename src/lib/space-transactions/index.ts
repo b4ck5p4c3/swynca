@@ -7,7 +7,6 @@ import {
   Balance,
   Prisma,
 } from "@prisma/client";
-import { PaginationProps } from "../types";
 
 const prisma = new PrismaClient();
 
@@ -37,7 +36,10 @@ export type CreateInput = CreateDeposit | CreateWithdrawal;
 
 export type FindAllOptions = {
   sortDate?: "desc" | "asc";
-  pagination?: PaginationProps;
+  pagination?: {
+    pageSize: number;
+    pageNumber: number;
+  };
 };
 
 /**

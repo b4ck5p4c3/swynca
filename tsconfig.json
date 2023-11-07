@@ -21,8 +21,11 @@
       }
     ],
     "paths": {
+      "@/data/*": ["./data/*"],
+      "@/app/*": ["./app/*"],
       "@/lib/*": ["./lib/*"],
-      "@/shared/*": ["./shared/*"]
+      "@/shared/*": ["./app/_shared/*"],
+      "@/types/*": ["./types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

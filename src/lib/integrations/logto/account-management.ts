@@ -45,7 +45,7 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
     body.append('scope', 'all');
 
     const response = await axios.post(
-      `${this.baseUrl}/oidc/token`,
+      `${this.baseUrl}oidc/token`,
       body,
       {
         auth: {
@@ -71,7 +71,7 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
 
     const accessToken = await this.getAccessToken();
     this.client = axios.create({
-      baseURL: this.baseUrl,
+      baseURL: this.baseUrl + 'api',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
       }
@@ -97,7 +97,7 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
   constructor() {
     this.appId = getRequiredEnv('LOGTO_M2M_APP_ID');
     this.appSecret = getRequiredEnv('LOGTO_M2M_APP_SECRET');
-    this.baseUrl = getRequiredEnv('LOGTO_M2M_BASE_URL');
+    this.baseUrl = getRequiredEnv('LOGTO_M2M_ENDPOINT');
     this.prisma = new PrismaClient();
   }
 

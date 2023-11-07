@@ -1,14 +1,12 @@
-import { getServerSession } from "@/lib/auth/wrapper";
+import { getSession } from "../auth";
 
 export default async function DashboardPage() {
-  const session = await getServerSession();
+  const session = await getSession();
 
   return (
     <div>
       <h1>Look ma, rendered on server</h1>
-      <p>
-        Hi, {session?.user?.name} {session?.user?.email} {session?.user?.image}
-      </p>
+      <pre>{JSON.stringify(session.user)}</pre>
     </div>
   );
 }

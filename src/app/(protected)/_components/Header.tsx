@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getSession } from "next-auth/react";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Session } from "next-auth";
 import { usePathname } from "next/navigation";
 
@@ -14,7 +14,7 @@ const links: Record<string, string> = {
   finance: "Finance",
 };
 
-export default function GlobalHeader() {
+export default function Header() {
   const [session, setSession] = useState<Session | null>(null);
   const [userMenuVisible, setUserMenuVisibility] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -84,9 +84,12 @@ export default function GlobalHeader() {
             </div>
             <ul className="py-1" aria-labelledby="user-menu-button">
               <li>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700">
+                <Link
+                  href={`/members/${session?.user.id}`}
+                  className="block px-4 py-2 text-sm text-gray-700"
+                >
                   Profile
-                </a>
+                </Link>
               </li>
               <li>
                 <Link

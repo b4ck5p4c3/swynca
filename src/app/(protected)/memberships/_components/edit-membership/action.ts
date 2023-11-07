@@ -1,10 +1,10 @@
 "use server";
 
-import { getServerSession } from "@/lib/auth/wrapper";
 import { create, update } from "lib/membership";
 import { Prisma } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { Boolean, Record, Static, String } from "runtypes";
+import { getSession } from "@/app/auth";
 
 const MAX_AMOUNT = new Prisma.Decimal(10).pow(10);
 
@@ -19,13 +19,13 @@ type UpdateRequestType = Static<typeof UpdateRequest>;
 
 type Result =
   | {
-      success: true;
-      error?: undefined;
-    }
+    success: true;
+    error?: undefined;
+  }
   | {
-      success: false;
-      error: string;
-    };
+    success: false;
+    error: string;
+  };
 
 const getGenericInputError = (title: string, amount: Prisma.Decimal) => {
   if (amount.lessThanOrEqualTo(0)) {
@@ -53,7 +53,7 @@ export async function edit(request: UpdateRequestType): Promise<Result> {
 
   const { id, amount, title, active } = request;
 
-  const session = await getServerSession();
+  const session = await getSession();
   if (!session) {
     return {
       success: false,

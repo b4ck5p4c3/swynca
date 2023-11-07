@@ -1,40 +1,37 @@
-import { Member, PrismaClient } from "@prisma/client";
-import { OAuthConfig } from "next-auth/providers";
-import { MemberProfile, memberToProfile } from "../../auth/profile";
+import { PrismaClient } from "@prisma/client";
+import { OIDCConfig } from "next-auth/providers";
+import { memberToProfile } from "@/lib/auth/profile";
 import { getRequiredEnv } from "@/lib/utils/env";
 
 const prisma = new PrismaClient();
 
-// Rough generic type, need to be polished for particular Ory setup
-export type OryProfile = {
-  amr: string[];
+type LogtoProfile = {
+  sub: string;
+  name: string | null;
+  picture: string | null;
+  username: string;
+  email: string;
+  email_verified: boolean;
   at_hash: string;
-  aud: string[];
-  auth_time: number;
+  aud: string;
   exp: number;
   iat: number;
   iss: string;
-  jti: string;
-  rat: number;
-  sid: string;
-  sub: string;
 };
 
-const LogtoProviderFactory = (): OAuthConfig<OryProfile> => {
+const LogtoProviderFactory = (): OIDCConfig<LogtoProfile> => {
   return {
-    type: "oauth",
-    name: "Logto",
+    type: "oidc",
     id: "logto",
-    wellKnown: getRequiredEnv("LOGTO_WELL_KNOWN"),
-    authorization: { params: { grant_type: "authorization_code" } },
+    name: "Logto",
+    issuer: getRequiredEnv('LOGTO_ISSUER'),
+    clientId: getRequiredEnv("LOGTO_CLIENT_ID"),
+    clientSecret: getRequiredEnv("LOGTO_CLIENT_SECRET"),
     client: {
       authorization_signed_response_alg: 'ES384',
       id_token_signed_response_alg: 'ES384'
     },
-    idToken: true,
-    checks: ["pkce", "state"],
-    clientId: getRequiredEnv("LOGTO_CLIENT_ID"),
-    clientSecret: getRequiredEnv("LOGTO_CLIENT_SECRET"),
+    authorization: { params: { grant_type: "authorization_code" } },
     profile: async (data) => {
       const memberBound = await prisma.externalAuthenticationLogto.findFirst({
         where: {
@@ -51,7 +48,7 @@ const LogtoProviderFactory = (): OAuthConfig<OryProfile> => {
         );
       }
 
-      return memberToProfile(memberBound.member);
+      return memberToProfile(memberBound.member, { image: data.picture || undefined });
     },
   };
 };

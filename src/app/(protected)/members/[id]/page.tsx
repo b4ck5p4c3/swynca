@@ -1,46 +1,23 @@
-import React from "react";
 import Image from "next/image";
-import { PrismaClient } from "@prisma/client";
-import { getServerSession } from "@/lib/auth/wrapper";
 import { MemberProperties } from "./_components/properties/properties";
 import { SubscriptionsTable } from "./_components/subscriptions/table";
 import { ACSKeyTable } from "./_components/acs/table";
 import { notFound } from "next/navigation";
+import { getSession } from "@/app/auth";
+import { getById } from "@/lib/member";
 
 async function MemberPage(props: { params: { id: string } }) {
-  const prisma = new PrismaClient();
-  const session = await getServerSession();
+  const session = await getSession();
 
   const id = props.params.id;
-  const member = await prisma.member.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      MembershipSubscriptionHistory: {
-        include: {
-          membership: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
-        },
-        where: {
-          declinedAt: null,
-        },
-      },
-      ACSKey: true,
-    },
-  });
-
-  if (member == null) {
+  const member = await getById(id);
+  if (!member) {
     notFound();
   }
 
-  const canEdit = session?.user?.id === props.params.id;
-
+  // @todo fetch avatar
   const image = "";
+  const canEdit = session.user.id === member.id;
 
   return (
     <>

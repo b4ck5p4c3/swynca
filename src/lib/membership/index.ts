@@ -2,6 +2,23 @@ import { Membership, Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+
+/**
+ * Retrieves the membership subscription history for a given member.
+ * @param memberId - The ID of the member to retrieve the history for.
+ * @returns Array of membership subscription including their associated membership.
+ */
+export async function getMemberHistory(memberId: string) {
+  return prisma.membershipSubscription.findMany({
+    where: {
+      memberId,
+    },
+    include: {
+      membership: true,
+    }
+  });
+}
+
 export async function getAll(): Promise<Membership[]> {
   return prisma.membership.findMany({
     orderBy: {

@@ -17,7 +17,6 @@ async function getKeys() {
       },
     },
   });
-  console.log(keys);
 
   const uids = keys
     .filter(({ type }) => type === KeyType.UID)
