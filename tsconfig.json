@@ -22,9 +22,9 @@
     ],
     "paths": {
       "@/data/*": ["./data/*"],
+      "@/shared/*": ["./app/_shared/*"],
       "@/app/*": ["./app/*"],
       "@/lib/*": ["./lib/*"],
-      "@/shared/*": ["./app/_shared/*"],
       "@/types/*": ["./types/*"]
     }
   },

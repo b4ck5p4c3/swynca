@@ -15,6 +15,9 @@ export async function getMemberHistory(memberId: string) {
     include: {
       membership: true,
     },
+    orderBy: {
+      declinedAt: "desc",
+    },
   });
 }
 

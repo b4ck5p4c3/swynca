@@ -19,8 +19,8 @@ export default async function MembershipsPage() {
               <CreateMembership />
             </div>
           </div>
-          <table className="w-full text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-200">
+          <table className="w-full text-sm text-left text-gray-700">
+            <thead className="text-xs uppercase bg-gray-200 font-semibold">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   Title
@@ -41,13 +41,28 @@ export default async function MembershipsPage() {
                   className={classNames("border-b", {
                     "bg-gray-50": idx % 2,
                     "bg-white": !(idx % 2),
+                    "line-through": !membership.active,
                   })}
                 >
-                  <td className="px-6 py-4">{membership.title}</td>
-                  <td className="px-6 py-4">
+                  <td
+                    className={classNames("px-6 py-4 font-semibold", {
+                      "opacity-50": !membership.active,
+                    })}
+                  >
+                    {membership.title}
+                  </td>
+                  <td
+                    className={classNames("px-6 py-4", {
+                      "opacity-50": !membership.active,
+                    })}
+                  >
                     {formatCurrency(membership.amount)}
                   </td>
-                  <td className="px-6 py-4">
+                  <td
+                    className={classNames("px-6 py-4", {
+                      "opacity-50": !membership.active,
+                    })}
+                  >
                     {membership.active ? "Active" : "Disabled"}
                   </td>
                   <td className="px-6 py-4 text-right">

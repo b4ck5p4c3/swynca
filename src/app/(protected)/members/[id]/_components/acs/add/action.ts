@@ -1,7 +1,7 @@
 "use server";
 
 import { Literal, Record, Static, String, Union } from "runtypes";
-import { exists } from "@/lib/member";
+// import { exists } from "@/lib/member";
 import { addKey } from "@/lib/acs";
 import { revalidateTag } from "next/cache";
 
@@ -9,7 +9,7 @@ const AddRequest = Record({
   memberId: String,
   type: Union(Literal("UID"), Literal("PAN")),
   key: String.withConstraint(
-    (value) => !!value.match(/^((([0-9A-F])([0-9A-F]))+)$/),
+    (value) => !!value.match(/^((([0-9A-F])([0-9A-F]))+)$/)
   ),
 });
 
@@ -32,12 +32,12 @@ export async function add(request: AddRequestType): Promise<Result> {
     };
   }
 
-  if (!(await exists(request.memberId))) {
-    return {
-      success: false,
-      error: "Member not found",
-    };
-  }
+  // if (!(await exists(request.memberId))) {
+  //   return {
+  //     success: false,
+  //     error: "Member not found",
+  //   };
+  // }
 
   await addKey(request.memberId, request.type, request.key);
 

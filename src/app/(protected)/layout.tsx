@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import "./_components/globals.scss";
 import Header from "./_components/Header";
+import { Toaster } from "react-hot-toast";
 
 export default async function ProtectedLayout({
   children,
@@ -18,6 +19,7 @@ export default async function ProtectedLayout({
           <main>{children}</main>
         </div>
         <div id="modals">{/* Mount slot for modal windows */}</div>
+        <Toaster />
       </body>
     </html>
   );

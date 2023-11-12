@@ -11,7 +11,12 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {},
+  experimental: {
+    serverActions: {
+      // @todo elaborate on this as well
+      allowedOrigins: ["swynca.localhost:3000"]
+    }
+  },
 };
 
 module.exports = nextConfig;

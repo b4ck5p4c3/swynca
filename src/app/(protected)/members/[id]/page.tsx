@@ -1,9 +1,9 @@
 import { MemberProperties } from "./_components/properties/properties";
-import { SubscriptionsTable } from "./_components/subscriptions/table";
 import { notFound } from "next/navigation";
 import { getSession } from "@/app/auth";
 import { getById } from "@/lib/member";
-import { fetchMemberHistory } from "@/data/membership-subscriptions/fetch";
+import { fetchMemberHistory } from "@/data/subscriptions/fetch";
+import SubscriptionsTable from "./_components/subscriptions/SubscriptionsTable";
 
 async function MemberPage(props: { params: { id: string } }) {
   const { user } = await getSession();

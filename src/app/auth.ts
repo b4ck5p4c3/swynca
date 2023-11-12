@@ -34,7 +34,7 @@ const nextAuth = NextAuth({
  */
 export async function getSession() {
   const session = await auth();
-  if (!session) {
+  if (!session || !session.user) {
     throw new Error("Session is expected but not available");
   }
 
