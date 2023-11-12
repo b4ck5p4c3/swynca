@@ -22,12 +22,12 @@ export type FetchMemberKeysDTO = KeyDTO[];
 const mask = (type: KeyType, key: string): string => {
   // For PAN, follow PCI DSS rule of masking all but first 6 and last 4 digits
   if (type === "PAN") {
-    return key.slice(0, 6) + "*".repeat(6) + key.slice(-4);
+    return "*".repeat(key.length - 4) + key.slice(-4);
   }
 
-  // For UID, mask everything but last 4 characters
+  // For UID, mask everything but last 2 characters
   if (type === "UID") {
-    return "*".repeat(key.length - 4) + key.slice(-4);
+    return "*".repeat(key.length - 2) + key.slice(-2);
   }
 
   // Fallback to full reveal

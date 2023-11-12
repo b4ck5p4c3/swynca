@@ -13,9 +13,10 @@ const ICONS = {
 export type KeyTableProps = {
   memberId: string;
   keys: KeyDTO[];
+  canEdit?: boolean;
 };
 
-const KeyTable: React.FC<KeyTableProps> = ({ memberId, keys }) => {
+const KeyTable: React.FC<KeyTableProps> = ({ memberId, keys, canEdit }) => {
   return (
     <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
       <div className="flex justify-between p-5 items-center">
@@ -25,7 +26,7 @@ const KeyTable: React.FC<KeyTableProps> = ({ memberId, keys }) => {
             Keys granting physical access to the space
           </p>
         </div>
-        <KeyAdd memberId={memberId} />
+        {canEdit && <KeyAdd memberId={memberId} />}
       </div>
       <table className="w-full text-sm text-left text-gray-500">
         <thead className="text-xs text-gray-700 uppercase bg-gray-200">
@@ -56,7 +57,7 @@ const KeyTable: React.FC<KeyTableProps> = ({ memberId, keys }) => {
               <td className="px-6 py-4 font-mono">{key.key.toUpperCase()}</td>
               <td>
                 <div className="flex justify-end items-center px-2">
-                  <KeyDelete id={key.id} />
+                  {canEdit && <KeyDelete id={key.id} />}
                 </div>
               </td>
             </tr>
