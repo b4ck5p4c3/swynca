@@ -10,7 +10,7 @@ export type GetAllMembersDTO = {
 
 export async function getAll(): Promise<GetAllMembersDTO> {
   const members = await lib.getAll();
-  return members.map(m => ({
+  return members.map((m) => ({
     id: m.id,
     name: m.name,
     username: m.username,

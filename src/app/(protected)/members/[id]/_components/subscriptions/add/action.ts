@@ -23,7 +23,7 @@ type Result =
     };
 
 export async function subscribe(
-  request: SubscribeRequestType
+  request: SubscribeRequestType,
 ): Promise<Result> {
   if (!SubscribeRequest.validate(request).success) {
     return {

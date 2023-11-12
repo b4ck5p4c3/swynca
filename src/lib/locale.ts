@@ -22,9 +22,9 @@ const shortCurrencyFormat = new Intl.NumberFormat(LOCALE, {
   currencyDisplay: "narrowSymbol",
 });
 
-export function formatCurrency(amount: Prisma.Decimal, short?: boolean): string {
+export function formatCurrency(amount: number, short?: boolean): string {
   if (short) {
-    return shortCurrencyFormat.format(amount.toNumber());
+    return shortCurrencyFormat.format(amount);
   }
-  return currencyFormat.format(amount.toNumber());
+  return currencyFormat.format(amount);
 }

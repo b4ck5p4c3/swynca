@@ -28,7 +28,7 @@ async function MemberPage(props: { params: { id: string } }) {
         <div className="flex flex-row">
           <MemberProperties member={member} canEdit={canEdit} />
         </div>
-        <div className="grid grid-cols-2 gap-8">
+        <div className="flex flex-col">
           <div>
             <SubscriptionsTable
               subscriptions={membershipHistory}

@@ -11,7 +11,7 @@ export type PaginationResult = {
 export function getPagination(
   page: number | string = 1,
   perPage: number = 10,
-  count: number
+  count: number,
 ): PaginationResult {
   let parsedPage = Number(page as string);
   if (parsedPage < 1) {

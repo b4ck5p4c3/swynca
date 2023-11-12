@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import classNames from "classnames";
-import { edit } from "./action";
 import { MembershipDTO } from "@/data/memberships/fetch";
+import { editMembership } from "@/data/memberships/action";
 
 export type EditMembershipModalProps = {
   visible: boolean;
@@ -25,7 +25,7 @@ function EditMembershipModal({
 
   useEffect(() => {
     setTitle(membership.title);
-    setAmount(membership.amount);
+    setAmount(membership.amount.toFixed(2));
     setActive(membership.active);
   }, [membership.active, membership.amount, membership.title]);
 
@@ -38,8 +38,8 @@ function EditMembershipModal({
     []
   );
 
-  const editMembership = async () => {
-    const result = await edit({
+  const edit = async () => {
+    const result = await editMembership({
       id: membership.id,
       title,
       amount,
@@ -122,7 +122,7 @@ function EditMembershipModal({
                 }
               )}
               disabled={submitDisabled}
-              onClick={editMembership}
+              onClick={edit}
             >
               Save
             </button>

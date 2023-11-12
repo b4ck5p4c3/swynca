@@ -24,12 +24,12 @@ const LogtoProviderFactory = (): OIDCConfig<LogtoProfile> => {
     type: "oidc",
     id: "logto",
     name: "Logto",
-    issuer: getRequiredEnv('LOGTO_ISSUER'),
+    issuer: getRequiredEnv("LOGTO_ISSUER"),
     clientId: getRequiredEnv("LOGTO_CLIENT_ID"),
     clientSecret: getRequiredEnv("LOGTO_CLIENT_SECRET"),
     client: {
-      authorization_signed_response_alg: 'ES384',
-      id_token_signed_response_alg: 'ES384'
+      authorization_signed_response_alg: "ES384",
+      id_token_signed_response_alg: "ES384",
     },
     authorization: { params: { grant_type: "authorization_code" } },
     profile: async (data) => {
@@ -44,11 +44,13 @@ const LogtoProviderFactory = (): OIDCConfig<LogtoProfile> => {
 
       if (!memberBound) {
         throw new Error(
-          `Unbound Member tried to log in, reject for ${data.sub}`
+          `Unbound Member tried to log in, reject for ${data.sub}`,
         );
       }
 
-      return memberToProfile(memberBound.member, { image: data.picture || undefined });
+      return memberToProfile(memberBound.member, {
+        image: data.picture || undefined,
+      });
     },
   };
 };

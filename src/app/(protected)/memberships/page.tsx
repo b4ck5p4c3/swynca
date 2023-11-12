@@ -1,9 +1,8 @@
 import { formatCurrency } from "@/lib/locale";
 import classNames from "classnames";
-import { fetchAll } from "lib/membership";
 import CreateMembershipButton from "./_components/create-membership/button";
 import EditMembershipButton from "./_components/edit-membership/button";
-import convertToMembershipDTO from "./_components/edit-membership/utils";
+import { fetchAll } from "@/data/memberships/fetch";
 
 export default async function MembershipsPage() {
   const memberships = await fetchAll();
@@ -11,18 +10,10 @@ export default async function MembershipsPage() {
   return (
     <>
       <div className="flex flex-col gap-8">
-        <div className="">
-          <h1 className="text-3xl font-semibold font-mono">
-            <span className="text-gray-400">Memberships</span>
-          </h1>
-        </div>
         <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
           <div className="flex justify-between p-5 items-center">
             <div className="text-lg font-semibold text-left text-gray-900 bg-white">
               Memberships
-              <p className="mt-1 text-sm font-normal text-gray-500">
-                Various memberships for different members
-              </p>
             </div>
             <div className="">
               <CreateMembershipButton />
@@ -60,9 +51,7 @@ export default async function MembershipsPage() {
                     {membership.active ? "Active" : "Disabled"}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <EditMembershipButton
-                      membership={convertToMembershipDTO(membership)}
-                    />
+                    <EditMembershipButton membership={membership} />
                   </td>
                 </tr>
               ))}

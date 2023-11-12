@@ -23,7 +23,7 @@ const Modal: React.FC<ModalProps> = ({ children, onClose }) => {
     >
       {children}
     </div>,
-    document.getElementById("modals")!
+    document.getElementById("modals")!,
   );
 };
 

@@ -11,10 +11,14 @@ export function AddSubscriptionButton({
   availableMemberships: {
     id: string;
     title: string;
-    amount: string;
+    amount: number;
   }[];
 }) {
   const [isVisible, setVisible] = useState(false);
+
+  if (availableMemberships.length === 0) {
+    return null;
+  }
 
   return (
     <>

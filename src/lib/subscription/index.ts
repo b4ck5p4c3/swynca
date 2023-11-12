@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function unsubscribe(
   memberId: string,
-  membershipId: string
+  membershipId: string,
 ): Promise<void> {
   await prisma.membershipSubscription.updateMany({
     where: {
@@ -22,7 +22,7 @@ export async function unsubscribe(
 
 export async function activeExists(
   memberId: string,
-  membershipId: string
+  membershipId: string,
 ): Promise<boolean> {
   return (
     (await prisma.membershipSubscription.findFirst({
@@ -37,7 +37,7 @@ export async function activeExists(
 
 export async function add(
   memberId: string,
-  membershipId: string
+  membershipId: string,
 ): Promise<void> {
   await prisma.membershipSubscription.create({
     data: {

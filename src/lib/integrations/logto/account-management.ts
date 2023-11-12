@@ -1,14 +1,21 @@
 import { getRequiredEnv } from "@/lib/utils/env";
 import { PrismaClient } from "@prisma/client";
 import axios, { AxiosInstance } from "axios";
-import { AccountCreateDTO, AccountDTO, AccountPatchDTO, IntegrationAccountManagement } from "types/interfaces/account-management";
+import {
+  AccountCreateDTO,
+  AccountDTO,
+  AccountPatchDTO,
+  IntegrationAccountManagement,
+} from "types/interfaces/account-management";
 
 /**
  * Identifier of Logto Management API
  */
-const LOGTO_MANAGEMENT_API_ID = 'https://default.logto.app/api';
+const LOGTO_MANAGEMENT_API_ID = "https://default.logto.app/api";
 
-export default class LogtoAccountManagement implements IntegrationAccountManagement {
+export default class LogtoAccountManagement
+  implements IntegrationAccountManagement
+{
   /**
    * Pre-configured axios client
    */
@@ -40,27 +47,24 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
    */
   private async getAccessToken(): Promise<string> {
     const body = new URLSearchParams();
-    body.append('grant_type', 'client_credentials');
-    body.append('resource', LOGTO_MANAGEMENT_API_ID);
-    body.append('scope', 'all');
+    body.append("grant_type", "client_credentials");
+    body.append("resource", LOGTO_MANAGEMENT_API_ID);
+    body.append("scope", "all");
 
-    const response = await axios.post(
-      `${this.baseUrl}oidc/token`,
-      body,
-      {
-        auth: {
-          username: this.appId,
-          password: this.appSecret
-        }
-      });
+    const response = await axios.post(`${this.baseUrl}oidc/token`, body, {
+      auth: {
+        username: this.appId,
+        password: this.appSecret,
+      },
+    });
 
     const { access_token } = response.data;
     return access_token;
-  };
+  }
 
   /**
    * Returns an axios client with the correct headers
-   * @returns 
+   * @returns
    */
   private async getClient(): Promise<AxiosInstance> {
     // We assume that once the client is initialized, we can ignore the token's expiry
@@ -71,14 +75,14 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
 
     const accessToken = await this.getAccessToken();
     this.client = axios.create({
-      baseURL: this.baseUrl + 'api',
+      baseURL: this.baseUrl + "api",
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
-      }
+        Authorization: `Bearer ${accessToken}`,
+      },
     });
 
     return this.client;
-  };
+  }
 
   /**
    * Converts Logto's API response to AccountDTO
@@ -90,35 +94,35 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
       id: props.id,
       name: props.name,
       email: props.primaryEmail,
-      active: !props.isSuspended
-    }
-  };
+      active: !props.isSuspended,
+    };
+  }
 
   constructor() {
-    this.appId = getRequiredEnv('LOGTO_M2M_APP_ID');
-    this.appSecret = getRequiredEnv('LOGTO_M2M_APP_SECRET');
-    this.baseUrl = getRequiredEnv('LOGTO_M2M_ENDPOINT');
+    this.appId = getRequiredEnv("LOGTO_M2M_APP_ID");
+    this.appSecret = getRequiredEnv("LOGTO_M2M_APP_SECRET");
+    this.baseUrl = getRequiredEnv("LOGTO_M2M_ENDPOINT");
     this.prisma = new PrismaClient();
   }
 
   async bind(memberId: string, externalId: string): Promise<void> {
     await this.prisma.externalAuthenticationLogto.upsert({
       where: {
-        logtoId: externalId
+        logtoId: externalId,
       },
       update: { memberId },
       create: {
         logtoId: externalId,
-        memberId
-      }
+        memberId,
+      },
     });
   }
 
   async getExternalId(memberId: string): Promise<string | null> {
     const binding = await this.prisma.externalAuthenticationLogto.findUnique({
       where: {
-        memberId
-      }
+        memberId,
+      },
     });
 
     if (!binding) {
@@ -131,7 +135,7 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
   async findAccountById(id: string): Promise<AccountDTO | null> {
     const api = await this.getClient();
     const response = await api.get(`/users/${id}`, {
-      validateStatus: s => s === 200 || s === 404
+      validateStatus: (s) => s === 200 || s === 404,
     });
 
     if (response.status === 404) {
@@ -143,15 +147,12 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
 
   async createAccount(props: AccountCreateDTO): Promise<AccountDTO> {
     const api = await this.getClient();
-    const response = await api.post(
-      '/users',
-      {
-        name: props.name,
-        username: props.username,
-        password: props.password,
-        primaryEmail: props.email,
-      },
-    );
+    const response = await api.post("/users", {
+      name: props.name,
+      username: props.username,
+      password: props.password,
+      primaryEmail: props.email,
+    });
 
     const account: AccountDTO = {
       active: props.active ?? true,
@@ -182,22 +183,16 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
 
     let response: any;
     if (patch.password) {
-      response = await api.patch(
-        `/users/${id}/password`,
-        {
-          password: patch.password
-        },
-      );
+      response = await api.patch(`/users/${id}/password`, {
+        password: patch.password,
+      });
     }
 
     if (patch.name || patch.email) {
-      response = await api.patch(
-        `/users/${id}`,
-        {
-          name: patch.name ?? null,
-          primaryEmail: patch.email ?? null,
-        },
-      );
+      response = await api.patch(`/users/${id}`, {
+        name: patch.name ?? null,
+        primaryEmail: patch.email ?? null,
+      });
     }
 
     return this.convertApiToAccount(response.data);
@@ -205,20 +200,18 @@ export default class LogtoAccountManagement implements IntegrationAccountManagem
 
   async disable(id: string): Promise<AccountDTO> {
     const api = await this.getClient();
-    const response = await api.patch(
-      `/users/${id}/is-suspended`,
-      { isSuspended: true },
-    );
+    const response = await api.patch(`/users/${id}/is-suspended`, {
+      isSuspended: true,
+    });
 
     return this.convertApiToAccount(response.data);
   }
 
   async enable(id: string): Promise<AccountDTO> {
     const api = await this.getClient();
-    const response = await api.patch(
-      `/users/${id}/is-suspended`,
-      { isSuspended: false },
-    );
+    const response = await api.patch(`/users/${id}/is-suspended`, {
+      isSuspended: false,
+    });
 
     return this.convertApiToAccount(response.data);
   }

@@ -31,9 +31,21 @@ Swynca has 3 layers:
 - `src/app` - contains all the UI-related code (pages, components)
 
 In data layer, you should **never ever** return any entities directly from the database.
-Always define DTO types and manually convert entities to DTOs.
-DTO should only contain primitive types or other DTOs.
-Don't use Prisma types. Only exception is ENUMs.
+
+- Always define DTO types and manually convert entities to DTOs.
+- DTO should only contain primitive types or other DTOs.
+- Don't use Prisma types. Only exception is ENUMs.
+
+Catch only errors that:
+
+- Related to user input
+- Requires special handling (e.g. not found, duplicate, transaction rollback, cleanup, etc)
+
+Other errors (considered as "internal server errors") should be thrown and handled by the framework and tracing engine.
+
+If you're handling a such "internal server error" due to specific requirements – don't forget to register it in tracing engine.
+
+In data layer actions, don't forget to revalidate cache after any changes using `revalidateTag` function.
 
 Example:
 

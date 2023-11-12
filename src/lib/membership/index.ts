@@ -2,7 +2,6 @@ import { Membership, Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-
 /**
  * Retrieves the membership subscription history for a given member.
  * @param memberId - The ID of the member to retrieve the history for.
@@ -15,7 +14,7 @@ export async function getMemberHistory(memberId: string) {
     },
     include: {
       membership: true,
-    }
+    },
   });
 }
 
@@ -51,7 +50,7 @@ export async function create({
     data: {
       title,
       amount,
-      active: false,
+      active: true,
     },
   });
 }

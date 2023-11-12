@@ -24,7 +24,7 @@ export default function Header() {
     "block py-2 pl-3 pr-4 rounded md:bg-transparent md:p-0".concat(
       path?.split("/")[1] === p
         ? "bg-blue-700 text-violet-600 md:text-violet-600"
-        : "bg-gray-50 text-black"
+        : "bg-gray-50 text-black",
     );
 
   useEffect(() => {

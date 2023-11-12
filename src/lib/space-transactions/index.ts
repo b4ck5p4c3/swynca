@@ -49,7 +49,7 @@ export type FindAllOptions = {
  */
 export async function findAll(
   where?: Prisma.SpaceTransactionWhereInput,
-  options?: FindAllOptions
+  options?: FindAllOptions,
 ): Promise<SpaceTransaction[]> {
   if (options?.pagination) {
     return prisma.spaceTransaction.findMany({

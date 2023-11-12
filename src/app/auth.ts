@@ -12,7 +12,7 @@ const nextAuth = NextAuth({
       session.user.id = token.sub as string;
       session.user.username = token.username as string | undefined;
       session.user.image = token.picture;
-      return session
+      return session;
     },
     async jwt({ token, user, profile, account }) {
       if (profile && account) {
@@ -22,9 +22,9 @@ const nextAuth = NextAuth({
         token.externalProvider = account.provider;
         console.log(token);
       }
-      return token
-    }
-  }
+      return token;
+    },
+  },
 });
 
 /**
@@ -35,7 +35,7 @@ const nextAuth = NextAuth({
 export async function getSession() {
   const session = await auth();
   if (!session) {
-    throw new Error('Session is expected but not available');
+    throw new Error("Session is expected but not available");
   }
 
   return session;

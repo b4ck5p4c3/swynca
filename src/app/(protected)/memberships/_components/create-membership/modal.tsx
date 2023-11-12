@@ -1,24 +1,15 @@
 "use client";
 
+import classNames from "classnames";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  SpaceTransactionDeposit,
-  SpaceTransactionWithdrawal,
-  TransactionType,
-} from "@prisma/client";
-import classNames from "classnames";
-import { add } from "./action";
+import { createMembership } from "@/data/memberships/action";
 
 export type CreateMembershipProps = {
-  visible: boolean;
   onClose: () => void;
 };
 
-function CreateMembershipModal({
-  visible,
-  onClose,
-}: CreateMembershipProps) {
+function CreateMembershipModal({ onClose }: CreateMembershipProps) {
   const { refresh } = useRouter();
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
@@ -34,7 +25,7 @@ function CreateMembershipModal({
   );
 
   const addMembership = async () => {
-    const result = await add({
+    const result = await createMembership({
       title,
       amount,
     });
@@ -47,10 +38,6 @@ function CreateMembershipModal({
     refresh();
     onClose();
   };
-
-  if (!visible) {
-    return null;
-  }
 
   return (
     <div
@@ -66,7 +53,8 @@ function CreateMembershipModal({
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <span className="font-semibold text-gray-600">Title</span>
-              <textarea
+              <input
+                type="text"
                 placeholder="Membership title"
                 className="w-full rounded border border-gray-200 p-3"
                 value={title}
@@ -85,9 +73,9 @@ function CreateMembershipModal({
                   id=""
                   step="0.01"
                   placeholder="0.00"
-                  className="w-full rounded border border-gray-200 text-3xl p-3"
+                  className="w-full rounded border border-gray-200 p-3"
                 />
-                <span className="text-3xl">{currencySymbol}</span>
+                <span className="text-2xl">{currencySymbol}</span>
               </div>
             </div>
           </div>

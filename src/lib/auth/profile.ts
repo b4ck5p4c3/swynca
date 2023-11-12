@@ -10,9 +10,12 @@ export type Profile = {
 
 export type SSOProfile = {
   image?: string;
-}
+};
 
-export function memberToProfile(member: Member, ssoProfile?: SSOProfile): Profile {
+export function memberToProfile(
+  member: Member,
+  ssoProfile?: SSOProfile,
+): Profile {
   const { id, email, name, username } = member;
   return {
     id,

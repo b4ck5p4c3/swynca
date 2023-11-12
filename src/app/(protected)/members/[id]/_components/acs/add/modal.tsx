@@ -85,7 +85,7 @@ export function AddACSKeyModal({
                   ["bg-green-500 hover:bg-green-600"]: !submitDisabled,
                   ["bg-gray-400 cursor-not-allowed hover:bg-gray-400"]:
                     submitDisabled,
-                }
+                },
               )}
               disabled={submitDisabled}
               onClick={addACSKey}

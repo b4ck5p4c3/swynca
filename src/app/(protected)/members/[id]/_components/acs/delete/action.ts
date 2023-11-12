@@ -20,7 +20,7 @@ type Result =
     };
 
 export async function deleteACSKey(
-  request: DeleteRequestType
+  request: DeleteRequestType,
 ): Promise<Result> {
   if (!DeleteRequest.validate(request).success) {
     return {

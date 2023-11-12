@@ -125,9 +125,8 @@ const CreateMemberModalButton: React.FC = () => {
   return (
     <>
       <button
-        className="py-3 px-5 w-full text-sm font-medium text-center rounded-md text-white sm:w-auto bg-blue-600"
+        className="py-3 px-5 w-full text-sm font-medium text-center rounded-md text-white sm:w-auto bg-violet-600"
         role="button"
-        aria-label="Create a new member"
         onClick={() => setIsOpen(true)}
       >
         Create

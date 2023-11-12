@@ -25,10 +25,10 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [source, setSource] = useState<SpaceTransactionDeposit>(
-    SpaceTransactionDeposit.MAGIC
+    SpaceTransactionDeposit.MAGIC,
   );
   const [target, setTarget] = useState<SpaceTransactionWithdrawal>(
-    SpaceTransactionWithdrawal.MAGIC
+    SpaceTransactionWithdrawal.MAGIC,
   );
 
   const submitDisabled = !amount || !description;
@@ -38,7 +38,7 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
         style: "currency",
         currency: process.env.NEXT_PUBLIC_SWYNCA_CURRENCY,
       }).formatToParts(0)[4].value,
-    []
+    [],
   );
 
   const makeTransaction = async () => {
@@ -121,7 +121,7 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
                     kind === TransactionType.DEPOSIT,
                   ["bg-gray-400 cursor-not-allowed hover:bg-gray-400"]:
                     submitDisabled,
-                }
+                },
               )}
               disabled={submitDisabled}
               onClick={makeTransaction}

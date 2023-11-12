@@ -11,7 +11,7 @@ export type MembersTableProps = {
     status: MemberStatuses;
   }[];
   title: string;
-  subtitle: string;
+  subtitle?: string;
   children?: ReactNode;
 };
 
@@ -27,7 +27,11 @@ const MembersTable: React.FC<MembersTableProps> = ({
         <div className="flex justify-between items-center">
           <div className="text-lg font-semibold text-left text-gray-900 bg-white">
             {title}
-            <p className="mt-1 text-sm font-normal text-gray-500">{subtitle}</p>
+            {!!subtitle && (
+              <p className="mt-1 text-sm font-normal text-gray-500">
+                {subtitle}
+              </p>
+            )}
           </div>
           <div>{children}</div>
         </div>
@@ -66,7 +70,7 @@ const MembersTable: React.FC<MembersTableProps> = ({
               <td className="px-6 py-4 text-right">
                 <Link
                   href={`/members/${member.id}`}
-                  className="font-medium text-blue-600 hover:underline"
+                  className="font-medium text-violet-600 hover:underline"
                 >
                   View →
                 </Link>

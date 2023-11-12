@@ -9,7 +9,7 @@ const AddRequest = Record({
   memberId: String,
   type: Union(Literal("UID"), Literal("PAN")),
   key: String.withConstraint(
-    (value) => !!value.match(/^((([0-9A-F])([0-9A-F]))+)$/)
+    (value) => !!value.match(/^((([0-9A-F])([0-9A-F]))+)$/),
   ),
 });
 

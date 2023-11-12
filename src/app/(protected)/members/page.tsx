@@ -13,11 +13,7 @@ export default async function MembersPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
-        <MembersTable
-          members={active}
-          title="Residents"
-          subtitle="Members with ongoing subscriptions and access to internal resources."
-        >
+        <MembersTable members={active} title="Residents">
           <CreateMemberModalButton />
         </MembersTable>
       </div>

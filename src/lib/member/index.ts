@@ -1,4 +1,4 @@
-import { MemberStatuses, PrismaClient, } from "@prisma/client";
+import { MemberStatuses, PrismaClient } from "@prisma/client";
 import { AccountManagement } from "../auth/provider";
 import { isEmail, isName, isUsername } from "../validation";
 
@@ -10,7 +10,7 @@ export type AccountCreateDTO = {
   email: string;
   status?: MemberStatuses;
   password?: string;
-}
+};
 
 /**
  * Returns all members
@@ -35,28 +35,37 @@ export async function getById(id: string) {
  * @returns True if Member exists, false otherwise
  */
 export async function isExistsById(memberId: string): Promise<boolean> {
-  const res = await prisma.member.findFirst({ where: { id: memberId }, select: { id: true } });
+  const res = await prisma.member.findFirst({
+    where: { id: memberId },
+    select: { id: true },
+  });
   return res !== null;
 }
 
 /**
  * Creates a new Member, external account and binds them together
- * @param AccountCreateDTO Properties to create a new Member 
+ * @param AccountCreateDTO Properties to create a new Member
  * @returns Internal ID of the newly created Member
  */
-export async function create({ name, username, email, status, password }: AccountCreateDTO): Promise<string> {
+export async function create({
+  name,
+  username,
+  email,
+  status,
+  password,
+}: AccountCreateDTO): Promise<string> {
   const accountManagement = new AccountManagement();
 
   if (!isName(name)) {
-    throw new Error('Incorrect name');
+    throw new Error("Incorrect name");
   }
 
   if (!isEmail(email)) {
-    throw new Error('Incorrect email');
+    throw new Error("Incorrect email");
   }
 
   if (!isUsername(username)) {
-    throw new Error('Incorrect username');
+    throw new Error("Incorrect username");
   }
 
   const { member, externalAccount } = await prisma.$transaction(async (tx) => {
@@ -66,7 +75,7 @@ export async function create({ name, username, email, status, password }: Accoun
         username,
         email,
         status,
-      }
+      },
     });
 
     const externalAccount = await accountManagement.createAccount({
@@ -86,7 +95,7 @@ export async function create({ name, username, email, status, password }: Accoun
 
 /**
  * Frozen a Member and disables its external account
- * @param id Internal ID of the Member 
+ * @param id Internal ID of the Member
  */
 export async function disable(id: string): Promise<void> {
   const accountManagement = new AccountManagement();

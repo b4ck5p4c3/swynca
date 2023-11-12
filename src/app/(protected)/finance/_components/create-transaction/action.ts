@@ -28,13 +28,13 @@ type WithdrawRequestType = Static<typeof WithdrawRequest>;
 
 type CreateTransactionResult =
   | {
-    success: true;
-    error?: undefined;
-  }
+      success: true;
+      error?: undefined;
+    }
   | {
-    success: false;
-    error: string;
-  };
+      success: false;
+      error: string;
+    };
 
 const getGenericInputError = (amount: Prisma.Decimal, description: string) => {
   if (amount.lessThanOrEqualTo(0)) {
@@ -53,7 +53,7 @@ const getGenericInputError = (amount: Prisma.Decimal, description: string) => {
 };
 
 export async function deposit(
-  request: DepositRequestType
+  request: DepositRequestType,
 ): Promise<CreateTransactionResult> {
   if (!DepositRequest.validate(request).success) {
     return {
@@ -103,7 +103,7 @@ export async function deposit(
 }
 
 export async function withdraw(
-  request: WithdrawRequestType
+  request: WithdrawRequestType,
 ): Promise<CreateTransactionResult> {
   if (!WithdrawRequest.validate(request).success) {
     return {

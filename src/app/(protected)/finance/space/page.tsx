@@ -24,7 +24,7 @@ export default async function SpaceFinancePage(params: SpaceFinancePageParams) {
   const pagination = getPagination(
     params.searchParams?.page,
     TRANSACTIONS_PER_PAGE,
-    count
+    count,
   );
 
   const transactions = await prisma.spaceTransaction.findMany({
@@ -114,7 +114,7 @@ export default async function SpaceFinancePage(params: SpaceFinancePageParams) {
                           transaction.type === TransactionType.WITHDRAWAL,
                         "text-green-500":
                           transaction.type === TransactionType.DEPOSIT,
-                      }
+                      },
                     )}
                   >
                     {transaction.type === TransactionType.DEPOSIT ? "+" : "-"}{" "}

@@ -13,4 +13,4 @@ export type ActionGenericError = {
    * Optional error code for M2M
    */
   code?: string;
-}
+};

@@ -1,7 +1,7 @@
-import { DefaultSession } from 'next-auth';
+import { DefaultSession } from "next-auth";
 
 // Declaring custom session type
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
       /**
@@ -28,6 +28,6 @@ declare module 'next-auth' {
        * Username (nickname)
        */
       username: string | null | undefined;
-    } & DefaultSession['user'];
+    } & DefaultSession["user"];
   }
 }

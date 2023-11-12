@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 export async function addKey(
   memberId: string,
   type: KeyType,
-  key: string
+  key: string,
 ): Promise<void> {
   await prisma.aCSKey.create({
     data: {

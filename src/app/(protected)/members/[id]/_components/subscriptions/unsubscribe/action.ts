@@ -21,7 +21,7 @@ type Result =
     };
 
 export async function unsubscribe(
-  request: UnsubscribeRequestType
+  request: UnsubscribeRequestType,
 ): Promise<Result> {
   if (!UnsubscribeRequest.validate(request).success) {
     return {

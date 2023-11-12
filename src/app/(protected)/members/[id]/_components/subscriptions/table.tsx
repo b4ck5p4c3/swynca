@@ -16,16 +16,16 @@ export async function SubscriptionsTable({
   const memberships = await fetchAll();
   const signedUpMemberships = subscriptions.map((s) => s.membership.id);
   const availableMemberships = memberships.filter(
-    (m) => !signedUpMemberships.includes(m.id)
+    (m) => !signedUpMemberships.includes(m.id),
   );
 
   return (
     <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
       <div className="flex justify-between p-5 items-center">
         <div className="text-lg font-semibold text-left text-gray-900 bg-white">
-          Subscriptions
+          Memberships
           <p className="mt-1 text-sm font-normal text-gray-500">
-            Active user subscriptions
+            History of active and past subscriptions
           </p>
         </div>
         <div className="flex flex-row gap-2">
@@ -33,7 +33,6 @@ export async function SubscriptionsTable({
             memberId={memberId}
             availableMemberships={availableMemberships}
           />
-          <SubscriptionsHistoryLink />
         </div>
       </div>
       <table className="w-full text-sm text-left text-gray-500">

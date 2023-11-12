@@ -9,7 +9,7 @@ type AddACSKeyModalProps = {
   availableMemberships: {
     id: string;
     title: string;
-    amount: string;
+    amount: number;
   }[];
   memberId: string;
   visible: boolean;
@@ -26,7 +26,7 @@ export function AddMembershipModal({
 
   useEffect(() => {
     setMembershipId(
-      availableMemberships.length > 0 ? availableMemberships[0].id : ""
+      availableMemberships.length > 0 ? availableMemberships[0].id : "",
     );
   }, [availableMemberships]);
 
@@ -85,7 +85,7 @@ export function AddMembershipModal({
                   ["bg-green-500 hover:bg-green-600"]: !submitDisabled,
                   ["bg-gray-400 cursor-not-allowed hover:bg-gray-400"]:
                     submitDisabled,
-                }
+                },
               )}
               disabled={submitDisabled}
               onClick={addMembership}

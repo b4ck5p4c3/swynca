@@ -8,7 +8,7 @@ export type GetMemberHistoryDTO = {
     id: string;
     title: string;
     amount: number;
-  }
+  };
 }[];
 
 /**
@@ -17,9 +17,11 @@ export type GetMemberHistoryDTO = {
  * @returns Membership subscription history for the given member.
  */
 
-export async function fetchMemberHistory(memberId: string): Promise<GetMemberHistoryDTO> {
+export async function fetchMemberHistory(
+  memberId: string,
+): Promise<GetMemberHistoryDTO> {
   const history = await getMemberHistory(memberId);
-  return history.map(entry => ({
+  return history.map((entry) => ({
     id: entry.id,
     subscribedAt: entry.subscribedAt.toISOString(),
     declinedAt: entry.declinedAt?.toISOString() ?? null,
@@ -27,6 +29,6 @@ export async function fetchMemberHistory(memberId: string): Promise<GetMemberHis
       id: entry.membership.id,
       title: entry.membership.title,
       amount: Number(entry.membership.amount.toFixed(2)),
-    }
+    },
   }));
 }
