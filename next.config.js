@@ -3,8 +3,11 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   images: {
-    // @todo remove. We'll use our S3 bucket for avatars in future.
-    domains: ["s.gravatar.com", "pbs.twimg.com"],
+    // @todo elaborate on this
+    remotePatterns: [{
+      hostname: '*',
+      protocol: 'https',
+    }]
   },
   experimental: {},
 };

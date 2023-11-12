@@ -1,11 +1,11 @@
 import * as lib from "@/lib/member";
-import { Member } from "@prisma/client";
+import { MemberStatuses } from "@prisma/client";
 
 export type GetAllMembersDTO = {
-  id: Member['id'];
-  name: Member['name'];
-  username: Member['username'];
-  status: Member['status'];
+  id: string;
+  name: string;
+  username: string;
+  status: MemberStatuses;
 }[];
 
 export async function getAll(): Promise<GetAllMembersDTO> {

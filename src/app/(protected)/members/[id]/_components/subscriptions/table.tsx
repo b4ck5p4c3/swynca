@@ -1,25 +1,23 @@
-import { MembershipSubscription, Prisma } from "@prisma/client";
-import React from "react";
 import { AddSubscriptionButton } from "./add/button";
 import { SubscriptionsHistoryLink } from "./history/link";
 import classNames from "classnames";
 import { UnsubscribeButton } from "./unsubscribe/button";
 import { formatCurrency } from "@/lib/locale";
-import { getAll } from "@/lib/membership";
+import { GetMemberHistoryDTO } from "@/data/membership-subscriptions/fetch";
+import { fetchAll } from "@/data/memberships/fetch";
 
 export async function SubscriptionsTable({
   subscriptions,
   memberId,
 }: {
-  subscriptions: (MembershipSubscription & {
-    membership: {
-      id: string;
-      title: string;
-    };
-  })[];
+  subscriptions: GetMemberHistoryDTO;
   memberId: string;
 }) {
-  const memberships = await getAll();
+  const memberships = await fetchAll();
+  const signedUpMemberships = subscriptions.map((s) => s.membership.id);
+  const availableMemberships = memberships.filter(
+    (m) => !signedUpMemberships.includes(m.id)
+  );
 
   return (
     <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
@@ -33,18 +31,7 @@ export async function SubscriptionsTable({
         <div className="flex flex-row gap-2">
           <AddSubscriptionButton
             memberId={memberId}
-            allowedMemberships={memberships
-              .filter(
-                (membership) =>
-                  !subscriptions.find(
-                    (subscription) => subscription.membershipId == membership.id
-                  )
-              )
-              .map((item) => ({
-                id: item.id,
-                title: item.title,
-                amount: formatCurrency(item.amount),
-              }))}
+            availableMemberships={availableMemberships}
           />
           <SubscriptionsHistoryLink />
         </div>
@@ -73,10 +60,7 @@ export async function SubscriptionsTable({
               <td className="px-6 py-4 font-bold">{item.membership.title}</td>
               <td className="px-6 py-4">{item.subscribedAt.toISOString()}</td>
               <td>
-                <UnsubscribeButton
-                  membershipId={item.membershipId}
-                  memberId={item.memberId}
-                />
+                <UnsubscribeButton membershipId={item.id} memberId={memberId} />
               </td>
             </tr>
           ))}

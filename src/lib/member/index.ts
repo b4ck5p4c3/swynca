@@ -59,25 +59,26 @@ export async function create({ name, username, email, status, password }: Accoun
     throw new Error('Incorrect username');
   }
 
-  // @todo wrap in prisma tx
+  const { member, externalAccount } = await prisma.$transaction(async (tx) => {
+    const member = await tx.member.create({
+      data: {
+        name,
+        username,
+        email,
+        status,
+      }
+    });
 
-  const member = await prisma.member.create({
-    data: {
+    const externalAccount = await accountManagement.createAccount({
       name,
-      username,
       email,
-      status,
-    }
-  });
+      username,
+      password,
+      active: status ? status === "ACTIVE" : true,
+    });
 
-  const externalAccount = await accountManagement.createAccount({
-    name,
-    email,
-    username,
-    password,
-    active: status ? status === "ACTIVE" : true,
+    return { member, externalAccount };
   });
-
 
   await accountManagement.bind(member.id, externalAccount.id);
   return member.id;

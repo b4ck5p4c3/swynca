@@ -32,6 +32,8 @@ Swynca has 3 layers:
 
 In data layer, you should **never ever** return any entities directly from the database.
 Always define DTO types and manually convert entities to DTOs.
+DTO should only contain primitive types or other DTOs.
+Don't use Prisma types. Only exception is ENUMs.
 
 Example:
 
@@ -43,8 +45,8 @@ export async function getAll() {
 
 // Good
 export type GetAllDTO = {
-  id: Member["id"];
-  name: Member["name"];
+  id: string;
+  name: string;
 }[];
 
 export async function getAll(): Promise<GetAllDTO> {

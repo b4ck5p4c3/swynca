@@ -1,21 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { Membership } from "@prisma/client";
-import CreateMembershipModal from "../create-membership/modal";
 import EditMembershipModal from "./modal";
-
-export type MembershipDTO = {
-  id: string;
-  title: string;
-  amount: string;
-  active: boolean;
-};
+import { MembershipDTO } from "@/data/memberships/fetch";
 
 export default function EditMembershipButton({
   membership,
 }: {
-  membership: MembershipDTO,
+  membership: MembershipDTO;
 }) {
   const [visible, setVisible] = useState(false);
 

@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Modal from "../../_shared/Modal";
+import Modal from "../../../_shared/Modal";
 import { useFormState } from "react-dom";
 import createMember from "@/data/members/action";
 import { useForm } from "react-hook-form";

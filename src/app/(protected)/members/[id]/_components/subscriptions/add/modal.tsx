@@ -6,7 +6,7 @@ import { KeyType } from "@prisma/client";
 import { subscribe } from "./action";
 
 type AddACSKeyModalProps = {
-  allowedMemberships: {
+  availableMemberships: {
     id: string;
     title: string;
     amount: string;
@@ -17,7 +17,7 @@ type AddACSKeyModalProps = {
 };
 
 export function AddMembershipModal({
-  allowedMemberships,
+  availableMemberships,
   memberId,
   visible,
   onClose,
@@ -26,9 +26,9 @@ export function AddMembershipModal({
 
   useEffect(() => {
     setMembershipId(
-      allowedMemberships.length > 0 ? allowedMemberships[0].id : ""
+      availableMemberships.length > 0 ? availableMemberships[0].id : ""
     );
-  }, [allowedMemberships]);
+  }, [availableMemberships]);
 
   const submitDisabled = !membershipId;
 
@@ -68,7 +68,7 @@ export function AddMembershipModal({
                 value={membershipId}
                 onChange={(e) => setMembershipId(e.target.value)}
               >
-                {allowedMemberships.map((item) => (
+                {availableMemberships.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.title} - {item.amount}
                   </option>

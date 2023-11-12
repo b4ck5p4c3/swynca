@@ -1,9 +1,9 @@
 import Link from "next/link";
 import React from "react";
-import MembersTable from "./MembersTable";
+import MembersTable from "./_components/MembersTable";
 import { MemberStatuses } from "@prisma/client";
 import { getAll } from "@/data/members/fetch";
-import { CreateMemberModalButton } from "./CreateMemberModal";
+import { CreateMemberModalButton } from "./_components/CreateMemberModal";
 
 export default async function MembersPage() {
   const members = await getAll();

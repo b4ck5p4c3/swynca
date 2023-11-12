@@ -1,10 +1,10 @@
 "use client";
 
-import {useEffect, useMemo, useState} from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import classNames from "classnames";
 import { edit } from "./action";
-import { MembershipDTO } from "./button";
+import { MembershipDTO } from "@/data/memberships/fetch";
 
 export type EditMembershipModalProps = {
   visible: boolean;

@@ -5,10 +5,10 @@ import { useState } from "react";
 
 export function AddSubscriptionButton({
   memberId,
-  allowedMemberships,
+  availableMemberships,
 }: {
   memberId: string;
-  allowedMemberships: {
+  availableMemberships: {
     id: string;
     title: string;
     amount: string;
@@ -22,7 +22,7 @@ export function AddSubscriptionButton({
         visible={isVisible}
         onClose={() => setVisible(false)}
         memberId={memberId}
-        allowedMemberships={allowedMemberships}
+        availableMemberships={availableMemberships}
       />
       <div className="flex gap-2">
         <button
