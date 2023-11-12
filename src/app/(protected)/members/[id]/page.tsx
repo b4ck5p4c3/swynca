@@ -33,7 +33,7 @@ async function MemberPage(props: { params: { id: string } }) {
         </div>
         <div className="flex flex-col gap-8">
           <div>
-            <KeyTable keys={acsKeys} memberId={member.id} />
+            <KeyTable keys={acsKeys} memberId={member.id} canEdit={canEdit} />
           </div>
           <div>
             <SubscriptionsTable
