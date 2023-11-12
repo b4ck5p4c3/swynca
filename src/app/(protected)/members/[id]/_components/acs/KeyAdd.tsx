@@ -2,54 +2,60 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { editMembership } from "@/data/memberships/action";
 import Modal from "@/shared/Modal";
 import { useForm } from "react-hook-form";
-import useCurrencySymbol from "@/shared/hooks/useCurrencySymbol";
 import Spinner from "@/shared/Spinner";
-import { MembershipDTO } from "@/data/memberships/fetch";
+import { KeyType } from "@prisma/client";
+import { create } from "@/data/acs/action";
+import toast from "react-hot-toast";
 
 export type FormValues = {
-  title: string;
-  amount: string;
-  active: boolean;
+  name: string;
+  type: KeyType;
+  key: string;
 };
 
-export type CreateMembershipProps = {
+export type CreateKeyModalProps = {
+  memberId: string;
   onClose: () => void;
-  membership: MembershipDTO;
 };
 
-export type EditMembershipProps = {
-  membership: MembershipDTO;
-};
-
-function EditMembershipModal({ membership, onClose }: CreateMembershipProps) {
+const CreateKeyModal: React.FC<CreateKeyModalProps> = ({
+  onClose,
+  memberId,
+}) => {
   const { refresh } = useRouter();
-  const currencySymbol = useCurrencySymbol();
   const [error, setError] = useState<string | undefined>(undefined);
   const {
     formState: { isSubmitting, isValid },
     register,
+    watch,
     handleSubmit,
   } = useForm<FormValues>({
     mode: "all",
-    defaultValues: {
-      active: membership.active,
-      amount: membership.amount.toFixed(2),
-      title: membership.title,
-    },
+    defaultValues: { type: KeyType.UID },
   });
+  const keyType = watch("type");
 
   const onSubmit = async (data: FormValues) => {
-    const response = await editMembership({ id: membership.id, ...data });
+    const response = await create({
+      ...data,
+      memberId,
+    });
+
     if (response.success) {
       refresh();
       onClose();
+      toast.success("Key created");
     } else {
       setError(response.message);
     }
   };
+
+  const keyPlaceholder =
+    keyType === KeyType.PAN
+      ? "1111222233334444"
+      : "4, 7 or 10 hex digits (e.g. 00DEAD00)";
 
   return (
     <Modal onClose={onClose}>
@@ -57,7 +63,7 @@ function EditMembershipModal({ membership, onClose }: CreateMembershipProps) {
         <div className="flex flex-col gap-4">
           <header>
             <h2 className="lg:text-2xl text-xl font-medium text-gray-900">
-              Add membership
+              Adding a new key
             </h2>
           </header>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -71,32 +77,35 @@ function EditMembershipModal({ membership, onClose }: CreateMembershipProps) {
             )}
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <span className="font-semibold text-gray-600">Title</span>
+                <span className="font-semibold text-gray-600">Name</span>
                 <input
                   type="text"
-                  placeholder="Student"
+                  placeholder="e.g. Keyfob"
                   className="w-full rounded border border-gray-200 p-3"
-                  {...register("title", { required: true, minLength: 1 })}
+                  {...register("name", { required: true, minLength: 1 })}
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <span className="font-semibold text-gray-600">Amount</span>
-                <div className="flex gap-2 items-center">
-                  <input
-                    type="number"
-                    placeholder="0.00"
-                    step="0.01"
-                    className="w-full rounded border border-gray-200 p-3"
-                    {...register("amount", { required: true, min: 0 })}
-                  />
-                  <span className="text-2xl">{currencySymbol}</span>
-                </div>
+                <span className="font-semibold text-gray-600">Type</span>
+                <select
+                  className="w-full rounded border border-gray-200 p-3"
+                  {...register("type", { required: true })}
+                >
+                  {Object.values(KeyType).map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div>
-                <div className="flex gap-2 items-center">
-                  <input type="checkbox" {...register("active")} />
-                  <span>Active</span>
-                </div>
+              <div className="flex flex-col gap-1">
+                <span className="font-semibold text-gray-600">Key</span>
+                <input
+                  type="text"
+                  placeholder={keyPlaceholder}
+                  className="w-full rounded border border-gray-200 p-3 font-mono"
+                  {...register("key", { required: true })}
+                />
               </div>
             </div>
 
@@ -106,7 +115,7 @@ function EditMembershipModal({ membership, onClose }: CreateMembershipProps) {
                 className="px-4 py-2 bg-violet-600 text-white text-base font-medium rounded-md w-full shadow-sm flex flex-col items-center disabled:bg-violet-400 disabled:cursor-not-allowed"
                 disabled={isSubmitting || !isValid}
               >
-                {isSubmitting ? <Spinner /> : "Save"}
+                {isSubmitting ? <Spinner /> : "Create"}
               </button>
             </div>
           </form>
@@ -114,25 +123,24 @@ function EditMembershipModal({ membership, onClose }: CreateMembershipProps) {
       </div>
     </Modal>
   );
-}
+};
 
-export default function EditMembership({ membership }: EditMembershipProps) {
+const KeyAdd: React.FC<{ memberId: string }> = ({ memberId }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       {isOpen && (
-        <EditMembershipModal
-          membership={membership}
-          onClose={() => setIsOpen(false)}
-        />
+        <CreateKeyModal memberId={memberId} onClose={() => setIsOpen(false)} />
       )}
       <button
-        className="py-2 px-4 w-full text-sm rounded-md font-medium text-white sm:w-auto bg-violet-600"
+        className="py-3 px-5 w-full text-sm font-medium text-center rounded-md text-white sm:w-auto bg-violet-600"
         role="button"
         onClick={() => setIsOpen(true)}
       >
-        Edit
+        Create
       </button>
     </>
   );
-}
+};
+
+export default KeyAdd;

@@ -4,6 +4,8 @@ import { getSession } from "@/app/auth";
 import { getById } from "@/lib/member";
 import { fetchMemberHistory } from "@/data/subscriptions/fetch";
 import SubscriptionsTable from "./_components/subscriptions/SubscriptionsTable";
+import KeyTable from "./_components/acs/KeyTable";
+import { fetchMemberKeys } from "@/data/acs/fetch";
 
 async function MemberPage(props: { params: { id: string } }) {
   const { user } = await getSession();
@@ -16,6 +18,7 @@ async function MemberPage(props: { params: { id: string } }) {
 
   const canEdit = user.id === member.id;
   const membershipHistory = await fetchMemberHistory(member.id);
+  const acsKeys = await fetchMemberKeys(member.id);
 
   return (
     <>
@@ -28,15 +31,15 @@ async function MemberPage(props: { params: { id: string } }) {
         <div className="flex flex-row">
           <MemberProperties member={member} canEdit={canEdit} />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-8">
+          <div>
+            <KeyTable keys={acsKeys} memberId={member.id} />
+          </div>
           <div>
             <SubscriptionsTable
               subscriptions={membershipHistory}
               memberId={member.id}
             />
-          </div>
-          <div>
-            {/* <ACSKeyTable acsKeys={member.ACSKey} memberId={member.id} /> */}
           </div>
         </div>
         {/* <TransactionsTable/> */}

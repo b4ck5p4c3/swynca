@@ -1,24 +1,24 @@
 "use client";
 
-import { unsubscribe } from "@/data/subscriptions/action";
+import { remove } from "@/data/acs/action";
 import Spinner from "@/shared/Spinner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-export type UnsubscribeProps = {
-  subscriptionId: string;
+export type KeyDeleteProps = {
+  id: string;
 };
 
-const Unsubscribe: React.FC<UnsubscribeProps> = ({ subscriptionId }) => {
+const KeyDelete: React.FC<KeyDeleteProps> = ({ id }) => {
   const { refresh } = useRouter();
   const [loading, setLoading] = useState(false);
 
   const action = async () => {
     setLoading(true);
-    const response = await unsubscribe({ subscriptionId });
+    const response = await remove({ id });
     if (response.success) {
-      toast.success("Unsubscribed successfully");
+      toast.success("Key removed");
       refresh();
     } else {
       toast.error(`Error: ${response.message}`);
@@ -28,12 +28,12 @@ const Unsubscribe: React.FC<UnsubscribeProps> = ({ subscriptionId }) => {
 
   return (
     <button
-      className="flex justify-center px-3 py-2 w-24 rounded-md bg-red-500 text-white font-medium text-xs cursor-pointer"
+      className="flex justify-center px-3 py-2 w-18 rounded-md bg-red-500 text-white font-medium text-xs cursor-pointer"
       onClick={action}
     >
-      {loading ? <Spinner className="h-3 w-3" /> : "Unsubscribe"}
+      {loading ? <Spinner className="h-3 w-3" /> : "Delete"}
     </button>
   );
 };
 
-export default Unsubscribe;
+export default KeyDelete;
