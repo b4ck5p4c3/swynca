@@ -21,7 +21,7 @@ export async function getMemberHistory(memberId: string) {
 export async function getAll(): Promise<Membership[]> {
   return prisma.membership.findMany({
     orderBy: {
-      id: "asc",
+      active: "desc",
     },
   });
 }

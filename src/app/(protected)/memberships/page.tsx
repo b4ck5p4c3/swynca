@@ -1,8 +1,8 @@
-import { formatCurrency } from "@/lib/locale";
 import classNames from "classnames";
-import CreateMembershipButton from "./_components/create-membership/button";
-import EditMembershipButton from "./_components/edit-membership/button";
 import { fetchAll } from "@/data/memberships/fetch";
+import { formatCurrency } from "@/lib/locale";
+import CreateMembership from "./_components/CreateMembership";
+import EditMembership from "./_components/EditMembership";
 
 export default async function MembershipsPage() {
   const memberships = await fetchAll();
@@ -16,7 +16,7 @@ export default async function MembershipsPage() {
               Memberships
             </div>
             <div className="">
-              <CreateMembershipButton />
+              <CreateMembership />
             </div>
           </div>
           <table className="w-full text-sm text-left text-gray-500">
@@ -51,7 +51,7 @@ export default async function MembershipsPage() {
                     {membership.active ? "Active" : "Disabled"}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <EditMembershipButton membership={membership} />
+                    <EditMembership membership={membership} />
                   </td>
                 </tr>
               ))}

@@ -1,9 +1,8 @@
-import Link from "next/link";
 import React from "react";
 import MembersTable from "./_components/MembersTable";
 import { MemberStatuses } from "@prisma/client";
 import { getAll } from "@/data/members/fetch";
-import { CreateMemberModalButton } from "./_components/CreateMemberModal";
+import CreateMember from "./_components/CreateMember";
 
 export default async function MembersPage() {
   const members = await getAll();
@@ -14,7 +13,7 @@ export default async function MembersPage() {
     <div className="flex flex-col gap-8">
       <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
         <MembersTable members={active} title="Residents">
-          <CreateMemberModalButton />
+          <CreateMember />
         </MembersTable>
       </div>
       {frozen.length > 0 && (

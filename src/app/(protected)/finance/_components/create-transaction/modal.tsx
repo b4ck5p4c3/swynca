@@ -9,6 +9,7 @@ import {
 } from "@prisma/client";
 import classNames from "classnames";
 import { deposit, withdraw } from "./action";
+import useCurrencySymbol from "@/shared/hooks/useCurrencySymbol";
 
 export type CreateTransactionModalProps = {
   kind: TransactionType;
@@ -22,24 +23,17 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
   onClose,
 }) => {
   const { refresh } = useRouter();
+  const currencySymbol = useCurrencySymbol();
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [source, setSource] = useState<SpaceTransactionDeposit>(
-    SpaceTransactionDeposit.MAGIC,
+    SpaceTransactionDeposit.MAGIC
   );
   const [target, setTarget] = useState<SpaceTransactionWithdrawal>(
-    SpaceTransactionWithdrawal.MAGIC,
+    SpaceTransactionWithdrawal.MAGIC
   );
 
   const submitDisabled = !amount || !description;
-  const currencySymbol = useMemo(
-    () =>
-      new Intl.NumberFormat(process.env.NEXT_PUBLIC_SWYNCA_LOCALE, {
-        style: "currency",
-        currency: process.env.NEXT_PUBLIC_SWYNCA_CURRENCY,
-      }).formatToParts(0)[4].value,
-    [],
-  );
 
   const makeTransaction = async () => {
     let result;
@@ -121,7 +115,7 @@ const CreateTransactionModal: React.FC<CreateTransactionModalProps> = ({
                     kind === TransactionType.DEPOSIT,
                   ["bg-gray-400 cursor-not-allowed hover:bg-gray-400"]:
                     submitDisabled,
-                },
+                }
               )}
               disabled={submitDisabled}
               onClick={makeTransaction}

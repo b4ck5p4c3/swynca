@@ -1,12 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Modal from "../../../_shared/Modal";
-import { useFormState } from "react-dom";
+import Modal from "@/shared/Modal";
 import createMember from "@/data/members/action";
 import { useForm } from "react-hook-form";
 import classNames from "classnames";
-import Spinner from "@/app/_shared/Spinner";
+import Spinner from "@/shared/Spinner";
 
 export type FormValues = {
   email: string;
@@ -120,7 +119,7 @@ const CreateMemberModal: React.FC<CreateMemberModalProps> = ({ onClose }) => {
   );
 };
 
-const CreateMemberModalButton: React.FC = () => {
+const CreateMember: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -136,4 +135,4 @@ const CreateMemberModalButton: React.FC = () => {
   );
 };
 
-export { CreateMemberModal, CreateMemberModalButton };
+export default CreateMember;
