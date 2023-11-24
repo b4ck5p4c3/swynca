@@ -92,7 +92,7 @@ const Pagination: React.FC<PaginationProps> = ({ pagination }) => {
                       pos === entries.length - 1 && !pagination.hasNext,
                     "bg-violet-600 ring-violet-600 hover:bg-violet-600 text-white":
                       pagination.page === idx,
-                  }
+                  },
                 )}
               >
                 <span>{idx}</span>

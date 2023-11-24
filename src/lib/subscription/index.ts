@@ -1,18 +1,12 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { exists } from "@/lib/member";
-import { undefined } from "zod";
-
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export async function unsubscribe(
-  memberId: string,
-  membershipId: string
+export async function removeSubscription(
+  subscriptionId: string
 ): Promise<void> {
-  await prisma.membershipSubscription.updateMany({
+  await prisma.membershipSubscription.update({
     where: {
-      memberId,
-      membershipId,
-      declinedAt: null,
+      id: subscriptionId,
     },
     data: {
       declinedAt: new Date(),

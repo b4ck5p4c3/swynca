@@ -1,20 +1,27 @@
-import { Member, MemberStatuses } from "@prisma/client";
+import { Member } from "@prisma/client";
 
-export type MemberProfile = {
+export type Profile = {
   id: string;
   name: string;
   email: string;
-  status: MemberStatuses;
-  joinedAt: Date;
+  username: string;
+  image?: string;
 };
 
-export function memberToProfile(member: Member): MemberProfile {
-  const { id, email, name, joinedAt, status } = member;
+export type SSOProfile = {
+  image?: string;
+};
+
+export function memberToProfile(
+  member: Member,
+  ssoProfile?: SSOProfile,
+): Profile {
+  const { id, email, name, username } = member;
   return {
     id,
     email,
     name,
-    joinedAt,
-    status,
+    username,
+    image: ssoProfile?.image,
   };
 }

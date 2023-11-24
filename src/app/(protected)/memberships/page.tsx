@@ -1,9 +1,8 @@
-import { formatCurrency } from "@/lib/locale";
 import classNames from "classnames";
-import { fetchAll } from "lib/membership";
-import CreateMembershipButton from "./_components/create-membership/button";
-import EditMembershipButton from "./_components/edit-membership/button";
-import convertToMembershipDTO from "./_components/edit-membership/utils";
+import { fetchAll } from "@/data/memberships/fetch";
+import { formatCurrency } from "@/lib/locale";
+import CreateMembership from "./_components/CreateMembership";
+import EditMembership from "./_components/EditMembership";
 
 export default async function MembershipsPage() {
   const memberships = await fetchAll();
@@ -11,25 +10,17 @@ export default async function MembershipsPage() {
   return (
     <>
       <div className="flex flex-col gap-8">
-        <div className="">
-          <h1 className="text-3xl font-semibold font-mono">
-            <span className="text-gray-400">Memberships</span>
-          </h1>
-        </div>
         <div className="relative overflow-x-auto shadow-lg sm:rounded-lg">
           <div className="flex justify-between p-5 items-center">
             <div className="text-lg font-semibold text-left text-gray-900 bg-white">
               Memberships
-              <p className="mt-1 text-sm font-normal text-gray-500">
-                Various memberships for different members
-              </p>
             </div>
             <div className="">
-              <CreateMembershipButton />
+              <CreateMembership />
             </div>
           </div>
-          <table className="w-full text-sm text-left text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-200">
+          <table className="w-full text-sm text-left text-gray-700">
+            <thead className="text-xs uppercase bg-gray-200 font-semibold">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   Title
@@ -50,19 +41,32 @@ export default async function MembershipsPage() {
                   className={classNames("border-b", {
                     "bg-gray-50": idx % 2,
                     "bg-white": !(idx % 2),
+                    "line-through": !membership.active,
                   })}
                 >
-                  <td className="px-6 py-4">{membership.title}</td>
-                  <td className="px-6 py-4">
+                  <td
+                    className={classNames("px-6 py-4 font-semibold", {
+                      "opacity-50": !membership.active,
+                    })}
+                  >
+                    {membership.title}
+                  </td>
+                  <td
+                    className={classNames("px-6 py-4", {
+                      "opacity-50": !membership.active,
+                    })}
+                  >
                     {formatCurrency(membership.amount)}
                   </td>
-                  <td className="px-6 py-4">
+                  <td
+                    className={classNames("px-6 py-4", {
+                      "opacity-50": !membership.active,
+                    })}
+                  >
                     {membership.active ? "Active" : "Disabled"}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <EditMembershipButton
-                      membership={convertToMembershipDTO(membership)}
-                    />
+                    <EditMembership membership={membership} />
                   </td>
                 </tr>
               ))}

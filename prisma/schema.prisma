@@ -50,13 +50,13 @@ enum SpaceTransactionWithdrawal {
 
 model Member {
   id       String         @id @default(uuid())
-  name     String         @unique
+  name     String
   email    String         @unique
+  username String         @unique
   status   MemberStatuses @default(ACTIVE)
   joinedAt DateTime       @default(now())
 
-  ExternalAuthenticationAuth0   ExternalAuthenticationAuth0?
-  ExternalAuthenticationOry     ExternalAuthenticationOry?
+  ExternalAuthenticationLogto   ExternalAuthenticationLogto?
   SpaceTransaction              SpaceTransaction[]
   ACSKey                        ACSKey[]
   MembershipSubscriptionHistory MembershipSubscription[]
@@ -66,20 +66,15 @@ model ACSKey {
   id        String   @id @default(uuid())
   memberId  String
   type      KeyType
-  key       String
+  key       String   @unique
+  name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
   member    Member   @relation(fields: [memberId], references: [id])
 }
 
-model ExternalAuthenticationAuth0 {
-  auth0Id  String @id @unique
-  memberId String @unique
-  member   Member @relation(fields: [memberId], references: [id])
-}
-
-model ExternalAuthenticationOry {
-  oryId    String @id @unique
+model ExternalAuthenticationLogto {
+  logtoId    String @id @unique
   memberId String @unique
   member   Member @relation(fields: [memberId], references: [id])
 }
