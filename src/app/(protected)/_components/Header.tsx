@@ -57,15 +57,20 @@ export default function Header() {
             <span className="sr-only">Open user menu</span>
             {!!session?.user?.image ? (
               <Image
-                className="w-8 h-8 rounded-xl"
+                className="w-8 h-8 rounded-full"
                 src={session?.user?.image as string}
                 width={32}
                 height={32}
                 alt="user photo"
               />
             ) : (
-              <div className="w-8 h-8 bg-slate-300 rounded-xl flex justify-center items-center">
-                ?
+              <div className="w-8 h-8 bg-gradient-to-tr from-purple-500 to-pink-500 text-white rounded-full flex justify-center items-center">
+                <span className="text-xs font-semibold" aria-hidden>
+                  {session?.user.name
+                    ?.split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </span>
               </div>
             )}
           </button>
