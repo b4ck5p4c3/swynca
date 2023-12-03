@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
-import GlobalHeader from "@/shared/components/GlobalHeader/GlobalHeader";
+import "./_components/globals.scss";
+import Header from "./_components/Header";
+import { Toaster } from "react-hot-toast";
 
-import "../../styles/globals.scss";
-
-export default async function RootLayout({
+export default async function ProtectedLayout({
   children,
 }: {
   children: ReactNode;
@@ -15,9 +15,11 @@ export default async function RootLayout({
       </head>
       <body>
         <div className="xl:max-w-7xl w-full mx-auto max-w-[90%] py-8 px-4 md:px-0">
-          <GlobalHeader />
+          <Header />
           <main>{children}</main>
         </div>
+        <div id="modals">{/* Mount slot for modal windows */}</div>
+        <Toaster />
       </body>
     </html>
   );

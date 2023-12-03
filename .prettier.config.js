@@ -8,6 +8,7 @@ const config = {
   arrowParens: "avoid",
   parser: "typescript",
   printWidth: 100,
+  plugins: ["prettier-plugin-tailwindcss"],
 };
 
 export default config;

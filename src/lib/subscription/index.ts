@@ -1,18 +1,11 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { exists } from "@/lib/member";
-import { undefined } from "zod";
+import prisma from "../db";
 
-const prisma = new PrismaClient();
-
-export async function unsubscribe(
-  memberId: string,
-  membershipId: string
+export async function removeSubscription(
+  subscriptionId: string,
 ): Promise<void> {
-  await prisma.membershipSubscription.updateMany({
+  await prisma.membershipSubscription.update({
     where: {
-      memberId,
-      membershipId,
-      declinedAt: null,
+      id: subscriptionId,
     },
     data: {
       declinedAt: new Date(),
@@ -22,7 +15,7 @@ export async function unsubscribe(
 
 export async function activeExists(
   memberId: string,
-  membershipId: string
+  membershipId: string,
 ): Promise<boolean> {
   return (
     (await prisma.membershipSubscription.findFirst({
@@ -37,7 +30,7 @@ export async function activeExists(
 
 export async function add(
   memberId: string,
-  membershipId: string
+  membershipId: string,
 ): Promise<void> {
   await prisma.membershipSubscription.create({
     data: {

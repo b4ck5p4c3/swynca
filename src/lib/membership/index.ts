@@ -1,11 +1,29 @@
 import { Membership, Prisma, PrismaClient } from "@prisma/client";
+import prisma from "../db";
 
-const prisma = new PrismaClient();
+/**
+ * Retrieves the membership subscription history for a given member.
+ * @param memberId - The ID of the member to retrieve the history for.
+ * @returns Array of membership subscription including their associated membership.
+ */
+export async function getMemberHistory(memberId: string) {
+  return prisma.membershipSubscription.findMany({
+    where: {
+      memberId,
+    },
+    include: {
+      membership: true,
+    },
+    orderBy: {
+      declinedAt: "desc",
+    },
+  });
+}
 
-export async function fetchAll(): Promise<Membership[]> {
+export async function getAll(): Promise<Membership[]> {
   return prisma.membership.findMany({
     orderBy: {
-      id: "asc",
+      active: "desc",
     },
   });
 }
@@ -34,7 +52,7 @@ export async function create({
     data: {
       title,
       amount,
-      active: false,
+      active: true,
     },
   });
 }
@@ -49,7 +67,7 @@ export async function update(
     title?: string;
     amount?: Prisma.Decimal;
     active?: boolean;
-  }
+  },
 ): Promise<void> {
   await prisma.membership.update({
     where: {

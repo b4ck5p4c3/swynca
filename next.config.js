@@ -1,13 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: "standalone",
   reactStrictMode: true,
   images: {
-    domains: ["s.gravatar.com"],
+    // @todo elaborate on this
+    remotePatterns: [
+      {
+        hostname: "*",
+        protocol: "https",
+      },
+    ],
   },
   experimental: {
-    appDir: true,
-    serverActions: true,
+    serverActions: {
+      // @todo elaborate on this as well
+      allowedOrigins: ["swynca.localhost:3000"]
+    }
   },
 };
 

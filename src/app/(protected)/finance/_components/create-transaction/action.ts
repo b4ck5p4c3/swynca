@@ -1,7 +1,7 @@
 "use server";
 
-import { getServerSession } from "@/lib/auth/wrapper";
-import { create } from "@/lib/space-transactions";
+import { getSession } from "@/app/auth";
+import { create } from "@/lib/space-transaction";
 import { Prisma, TransactionType } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { Literal, Record, Static, String, Union } from "runtypes";
@@ -53,7 +53,7 @@ const getGenericInputError = (amount: Prisma.Decimal, description: string) => {
 };
 
 export async function deposit(
-  request: DepositRequestType
+  request: DepositRequestType,
 ): Promise<CreateTransactionResult> {
   if (!DepositRequest.validate(request).success) {
     return {
@@ -64,7 +64,7 @@ export async function deposit(
 
   const { amount, description, source } = request;
 
-  const session = await getServerSession();
+  const session = await getSession();
   if (!session) {
     return {
       success: false,
@@ -103,7 +103,7 @@ export async function deposit(
 }
 
 export async function withdraw(
-  request: WithdrawRequestType
+  request: WithdrawRequestType,
 ): Promise<CreateTransactionResult> {
   if (!WithdrawRequest.validate(request).success) {
     return {
@@ -114,7 +114,7 @@ export async function withdraw(
 
   const { amount, description, target } = request;
 
-  const session = await getServerSession();
+  const session = await getSession();
   if (!session) {
     return {
       success: false,

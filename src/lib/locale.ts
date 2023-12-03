@@ -1,11 +1,16 @@
 import { Prisma } from "@prisma/client";
 
-const TIMEZONE = process.env.SWYNCA_TZ || "Etc/ETC";
+const TIMEZONE = process.env.NEXT_PUBLIC_SWYNCA_TZ || "Etc/ETC";
 const LOCALE = process.env.NEXT_PUBLIC_SWYNCA_LOCALE || "en-US";
 const CURRENCY = process.env.NEXT_PUBLIC_SWYNCA_CURRENCY || "USD";
 
-const dateOnlyFormat = new Intl.DateTimeFormat(LOCALE);
+const dateOnlyFormat = new Intl.DateTimeFormat(LOCALE, {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
 const dateTimeFormat = new Intl.DateTimeFormat(LOCALE);
+
 const currencyFormat = new Intl.NumberFormat(LOCALE, {
   style: "currency",
   currency: CURRENCY,
@@ -13,6 +18,7 @@ const currencyFormat = new Intl.NumberFormat(LOCALE, {
   maximumFractionDigits: 2,
   currencyDisplay: "narrowSymbol",
 });
+
 const shortCurrencyFormat = new Intl.NumberFormat(LOCALE, {
   style: "currency",
   currency: CURRENCY,
@@ -20,9 +26,18 @@ const shortCurrencyFormat = new Intl.NumberFormat(LOCALE, {
   currencyDisplay: "narrowSymbol",
 });
 
-export function formatCurrency(amount: Prisma.Decimal, short?: boolean): string {
+export function formatCurrency(amount: number, short?: boolean): string {
   if (short) {
-    return shortCurrencyFormat.format(amount.toNumber());
+    return shortCurrencyFormat.format(amount);
   }
-  return currencyFormat.format(amount.toNumber());
+  return currencyFormat.format(amount);
+}
+
+export function formatDateShort(date: string): string;
+export function formatDateShort(date: Date): string;
+export function formatDateShort(date: any): string {
+  if (typeof date === "string") {
+    return dateOnlyFormat.format(new Date(date));
+  }
+  return dateOnlyFormat.format(date);
 }
