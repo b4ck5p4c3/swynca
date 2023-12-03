@@ -72,7 +72,7 @@ export async function create(input: CreateInput): Promise<SpaceTransaction> {
   const transaction = await prisma.spaceTransaction.create({ data: input });
   await prisma.balance.update({
     where: {
-      entityId: BALANCES_SPACE_UUID,
+      id: BALANCES_SPACE_UUID,
     },
     data: {
       amount:
@@ -89,11 +89,11 @@ export async function create(input: CreateInput): Promise<SpaceTransaction> {
  * @returns Current space balance in cents
  */
 export async function getBalance(): Promise<Prisma.Decimal> {
-  const { amount } = (await prisma.balance.findFirst({
+  const { amount } = await prisma.balance.findFirstOrThrow({
     where: {
-      entityId: BALANCES_SPACE_UUID,
+      id: BALANCES_SPACE_UUID,
     },
-  })) as Balance;
+  });
   return amount;
 }
 
@@ -118,7 +118,7 @@ export async function recalculateBalance(): Promise<void> {
 
   await prisma.balance.update({
     where: {
-      entityId: BALANCES_SPACE_UUID,
+      id: BALANCES_SPACE_UUID,
     },
     data: {
       amount: balance,
