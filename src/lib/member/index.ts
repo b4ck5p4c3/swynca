@@ -1,8 +1,7 @@
 import { MemberStatuses, PrismaClient } from "@prisma/client";
 import { AccountManagement } from "../auth/provider";
 import { isEmail, isName, isUsername } from "../validation";
-
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 export type AccountCreateDTO = {
   name: string;

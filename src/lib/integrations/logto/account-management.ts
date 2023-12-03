@@ -1,3 +1,4 @@
+import prisma from "@/lib/db";
 import { getRequiredEnv } from "@/lib/utils/env";
 import { PrismaClient } from "@prisma/client";
 import axios, { AxiosInstance } from "axios";
@@ -102,11 +103,10 @@ export default class LogtoAccountManagement
     this.appId = getRequiredEnv("LOGTO_M2M_APP_ID");
     this.appSecret = getRequiredEnv("LOGTO_M2M_APP_SECRET");
     this.baseUrl = getRequiredEnv("LOGTO_M2M_ENDPOINT");
-    this.prisma = new PrismaClient();
   }
 
   async bind(memberId: string, externalId: string): Promise<void> {
-    await this.prisma.externalAuthenticationLogto.upsert({
+    await prisma.externalAuthenticationLogto.upsert({
       where: {
         logtoId: externalId,
       },
@@ -119,7 +119,7 @@ export default class LogtoAccountManagement
   }
 
   async getExternalId(memberId: string): Promise<string | null> {
-    const binding = await this.prisma.externalAuthenticationLogto.findUnique({
+    const binding = await prisma.externalAuthenticationLogto.findUnique({
       where: {
         memberId,
       },

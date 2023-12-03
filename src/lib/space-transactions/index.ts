@@ -7,8 +7,7 @@ import {
   Balance,
   Prisma,
 } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 /**
  * UUID for Space balance in Balances table
