@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { getBalance, getBasicExpenses } from "@/lib/space-transactions";
+import { getBalance, getBasicExpenses } from "@/lib/space-transaction";
 import { formatCurrency } from "@/lib/locale";
 import CreateTransactionButton from "../_components/create-transaction/button";
 import Pagination from "./pagination";

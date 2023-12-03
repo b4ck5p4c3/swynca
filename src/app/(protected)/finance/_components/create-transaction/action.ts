@@ -1,7 +1,7 @@
 "use server";
 
 import { getSession } from "@/app/auth";
-import { create } from "@/lib/space-transactions";
+import { create } from "@/lib/space-transaction";
 import { Prisma, TransactionType } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { Literal, Record, Static, String, Union } from "runtypes";
