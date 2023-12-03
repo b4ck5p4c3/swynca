@@ -1,6 +1,6 @@
 generator client {
-  provider        = "prisma-client-js"
-  binaryTargets   = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
 }
 
 datasource db {
@@ -48,6 +48,25 @@ enum SpaceTransactionWithdrawal {
   PURCHASES
 }
 
+enum MemberTransactionDeposit {
+  // Magically appears. For data migraiton and corrections.
+  MAGIC
+
+  // Donation (doesn't affect balance)
+  DONATE
+
+  // Top-up own balance
+  TOPUP
+}
+
+enum MemberTransactionWithdrawal {
+  // Magically disappears. For data migraiton and corrections.
+  MAGIC
+
+  // Recurring membership fee
+  MEMBERSHIP
+}
+
 model Member {
   id       String         @id @default(uuid())
   name     String
@@ -56,10 +75,13 @@ model Member {
   status   MemberStatuses @default(ACTIVE)
   joinedAt DateTime       @default(now())
 
-  ExternalAuthenticationLogto   ExternalAuthenticationLogto?
-  SpaceTransaction              SpaceTransaction[]
   ACSKey                        ACSKey[]
+  ExternalAuthenticationLogto   ExternalAuthenticationLogto?
   MembershipSubscriptionHistory MembershipSubscription[]
+  SpaceTransaction              SpaceTransaction[]
+
+  ActoredTransactions   MemberTransaction[] @relation("ActoredTransactions")
+  SubjectedTransactions MemberTransaction[] @relation("SubjectedTransactions")
 }
 
 model ACSKey {
@@ -74,7 +96,7 @@ model ACSKey {
 }
 
 model ExternalAuthenticationLogto {
-  logtoId    String @id @unique
+  logtoId  String @id @unique
   memberId String @unique
   member   Member @relation(fields: [memberId], references: [id])
 }
@@ -105,6 +127,33 @@ model SpaceTransaction {
   deleted   DateTime?
 
   Actor Member? @relation(fields: [actorId], references: [id])
+}
+
+model MemberTransaction {
+  id      String          @id @default(uuid())
+  type    TransactionType
+  amount  Decimal         @db.Decimal(18, 2)
+  comment String?
+  date    DateTime        @default(now())
+
+  // Subject of this transaction
+  subjectId String
+
+  // Who created this transaction. Null if created automatically.
+  actorId String?
+
+  // For Deposit transactions, source of funds
+  source MemberTransactionDeposit?
+
+  // For Withdrawal transactions, funds target
+  target MemberTransactionWithdrawal?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deleted   DateTime?
+
+  Actor   Member? @relation(fields: [actorId], references: [id], name: "ActoredTransactions")
+  Subject Member? @relation(fields: [subjectId], references: [id], name: "SubjectedTransactions")
 }
 
 model Membership {

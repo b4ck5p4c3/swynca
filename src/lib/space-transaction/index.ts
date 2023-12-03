@@ -7,8 +7,7 @@ import {
   Balance,
   Prisma,
 } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 /**
  * UUID for Space balance in Balances table
@@ -71,9 +70,7 @@ export async function findAll(
  */
 export async function create(input: CreateInput): Promise<SpaceTransaction> {
   const transaction = await prisma.spaceTransaction.create({ data: input });
-
-  // Perform atomic increment/decrement over space balance
-  const res = await prisma.balance.update({
+  await prisma.balance.update({
     where: {
       entityId: BALANCES_SPACE_UUID,
     },
@@ -84,7 +81,6 @@ export async function create(input: CreateInput): Promise<SpaceTransaction> {
           : { decrement: input.amount },
     },
   });
-
   return transaction;
 }
 
@@ -102,9 +98,39 @@ export async function getBalance(): Promise<Prisma.Decimal> {
 }
 
 /**
+ * Recalculates the balance by summing up the amounts of all space transactions
+ */
+export async function recalculateBalance(): Promise<void> {
+  const transactions = await prisma.spaceTransaction.findMany({
+    select: {
+      type: true,
+      amount: true,
+    },
+  });
+
+  const balance = transactions.reduce(
+    (acc, transaction) =>
+      transaction.type === "DEPOSIT"
+        ? acc.add(transaction.amount)
+        : acc.sub(transaction.amount),
+    new Prisma.Decimal(0),
+  );
+
+  await prisma.balance.update({
+    where: {
+      entityId: BALANCES_SPACE_UUID,
+    },
+    data: {
+      amount: balance,
+    },
+  });
+}
+
+/**
  * Returns space basic expenses
  * @returns Space basic expenses in cents
  */
 export async function getBasicExpenses(): Promise<Prisma.Decimal> {
-  return new Prisma.Decimal(65 * 1000); // Hardcoded const for 65,000
+  // @todo: replace hard-coded value with configurable (in DB) one
+  return new Prisma.Decimal(65 * 1000);
 }

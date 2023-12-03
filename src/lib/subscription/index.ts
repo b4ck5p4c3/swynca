@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 export async function removeSubscription(
-  subscriptionId: string
+  subscriptionId: string,
 ): Promise<void> {
   await prisma.membershipSubscription.update({
     where: {
@@ -16,7 +15,7 @@ export async function removeSubscription(
 
 export async function activeExists(
   memberId: string,
-  membershipId: string
+  membershipId: string,
 ): Promise<boolean> {
   return (
     (await prisma.membershipSubscription.findFirst({
@@ -31,7 +30,7 @@ export async function activeExists(
 
 export async function add(
   memberId: string,
-  membershipId: string
+  membershipId: string,
 ): Promise<void> {
   await prisma.membershipSubscription.create({
     data: {

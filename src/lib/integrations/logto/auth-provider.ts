@@ -1,9 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { OIDCConfig } from "next-auth/providers";
 import { memberToProfile } from "@/lib/auth/profile";
 import { getRequiredEnv } from "@/lib/utils/env";
-
-const prisma = new PrismaClient();
+import prisma from "@/lib/db";
 
 type LogtoProfile = {
   sub: string;

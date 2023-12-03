@@ -1,7 +1,6 @@
-import { PrismaClient, KeyType, ACSKey } from "@prisma/client";
+import { KeyType, ACSKey } from "@prisma/client";
 import { isACSUID, isPAN } from "../validation";
-
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 export async function getMemberKeys(memberId: string) {
   return prisma.aCSKey.findMany({

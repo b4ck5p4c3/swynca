@@ -5,8 +5,10 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <h1>Look ma, rendered on server</h1>
-      <pre>{JSON.stringify(session.user, null, 2)}</pre>
+      <h1 className="text-6xl italic leading-[120%] font-bold">
+        If only I could hug you,
+        <br /> but I&apos;m just a text.
+      </h1>
     </div>
   );
 }

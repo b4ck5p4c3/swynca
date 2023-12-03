@@ -1,6 +1,5 @@
 import { Membership, Prisma, PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../db";
 
 /**
  * Retrieves the membership subscription history for a given member.
@@ -68,7 +67,7 @@ export async function update(
     title?: string;
     amount?: Prisma.Decimal;
     active?: boolean;
-  }
+  },
 ): Promise<void> {
   await prisma.membership.update({
     where: {
