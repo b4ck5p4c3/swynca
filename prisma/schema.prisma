@@ -79,7 +79,8 @@ model Member {
   ExternalAuthenticationLogto   ExternalAuthenticationLogto?
   MembershipSubscriptionHistory MembershipSubscription[]
   SpaceTransaction              SpaceTransaction[]
-
+  
+  Balance               Balance?
   ActoredTransactions   MemberTransaction[] @relation("ActoredTransactions")
   SubjectedTransactions MemberTransaction[] @relation("SubjectedTransactions")
 }
@@ -102,8 +103,10 @@ model ExternalAuthenticationLogto {
 }
 
 model Balance {
-  entityId String  @id @unique
+  id       String  @id @default(uuid())
+  entityId String? @unique
   amount   Decimal @db.Decimal(18, 2)
+  Member   Member? @relation(fields: [entityId], references: [id])
 }
 
 model SpaceTransaction {

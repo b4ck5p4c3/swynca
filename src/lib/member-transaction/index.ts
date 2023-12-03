@@ -1,5 +1,4 @@
 import {
-  SpaceTransaction,
   TransactionType,
   MemberTransactionDeposit,
   Balance,

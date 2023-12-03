@@ -7,13 +7,11 @@ import dotenv from "dotenv";
 import { randomBytes } from "crypto";
 import inquirer from "inquirer";
 import { MemberStatuses } from "@prisma/client";
-import { AccountManagement } from "../src/lib/auth/provider";
 import { create } from "../src/lib/member";
 
 dotenv.config();
 
 (async () => {
-  const api = new AccountManagement();
   const { name, username, email } = await inquirer.prompt([
     {
       type: "input",
