@@ -6,6 +6,7 @@ import { fetchMemberHistory } from "@/data/subscriptions/fetch";
 import SubscriptionsTable from "./_components/subscriptions/SubscriptionsTable";
 import KeyTable from "./_components/acs/KeyTable";
 import { fetchMemberKeys } from "@/data/acs/fetch";
+import { fetchBalance } from "@/data/balance/fetch";
 
 async function MemberPage(props: { params: { id: string } }) {
   const { user } = await getSession();
@@ -19,7 +20,8 @@ async function MemberPage(props: { params: { id: string } }) {
   const canEdit = user.id === member.id;
   const membershipHistory = await fetchMemberHistory(member.id);
   const acsKeys = await fetchMemberKeys(member.id);
-
+  const balanceData = await fetchBalance(member.id);
+  console.log('balanceData', balanceData);
   return (
     <>
       <div className="flex flex-col gap-8">
@@ -29,7 +31,11 @@ async function MemberPage(props: { params: { id: string } }) {
           </h1>
         </div>
         <div className="flex flex-row">
-          <MemberProperties member={member} canEdit={canEdit} />
+          <MemberProperties
+            member={member}
+            canEdit={canEdit}
+            balanceData={JSON.parse(JSON.stringify(balanceData))}
+          />
         </div>
         <div className="flex flex-col gap-8">
           <div>
