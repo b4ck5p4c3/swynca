@@ -33,7 +33,7 @@ export type CreateWithdrawal = CreateGeneric & {
 
 export type CreateInput = CreateDeposit | CreateWithdrawal;
 
-export type FindAllOptions = {
+export type FindManyOptions = {
   sortDate?: "desc" | "asc";
   pagination?: {
     pageSize: number;
@@ -42,17 +42,29 @@ export type FindAllOptions = {
 };
 
 /**
+ * Retrieves the count of space transactions based on the provided filter.
+ * @param where - Optional filter to apply to the space transactions.
+ * @returns A promise that resolves to the number of space transactions that match the filter.
+ */
+export async function getTransactionsCount(
+  where?: Prisma.SpaceTransactionWhereInput,
+): Promise<number> {
+  return prisma.spaceTransaction.count({ where });
+}
+
+/**
  * Returns all space transactions ordered
  * @param options
  * @returns
  */
-export async function findAll(
+export async function findMany(
   where?: Prisma.SpaceTransactionWhereInput,
-  options?: FindAllOptions,
-): Promise<SpaceTransaction[]> {
+  options?: FindManyOptions,
+) {
   if (options?.pagination) {
     return prisma.spaceTransaction.findMany({
       where: where,
+      include: { Actor: true },
       take: options.pagination.pageSize,
       skip: options.pagination.pageNumber * options.pagination.pageSize,
       orderBy: {
@@ -60,7 +72,7 @@ export async function findAll(
       },
     });
   }
-  return prisma.spaceTransaction.findMany({ where });
+  return prisma.spaceTransaction.findMany({ where, include: { Actor: true } });
 }
 
 /**
@@ -68,7 +80,9 @@ export async function findAll(
  * @param input Transaction details
  * @returns Created transactions properties
  */
-export async function create(input: CreateInput): Promise<SpaceTransaction> {
+export async function createSpaceTransaction(
+  input: CreateInput,
+): Promise<SpaceTransaction> {
   const transaction = await prisma.spaceTransaction.create({ data: input });
   await prisma.balance.update({
     where: {

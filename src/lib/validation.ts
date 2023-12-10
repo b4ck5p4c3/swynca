@@ -13,7 +13,10 @@ const isUsername = (username: string) =>
   username.length <= 64;
 
 const isSubscriptionTitle = (title: string) =>
-  title.match(/^.*$/u) && title.length >= 0;
+  title.length >= 0 && title.match(/^.*$/u);
+
+const isTransactionDescription = (description: string) =>
+  description.length >= 0 && description.match(/^.*$/u);
 
 const isACSUID = (uid: string) => {
   // Per ISO 14443, UID can be 4, 7, or 10 bytes long
@@ -47,6 +50,7 @@ export {
   isUsername,
   isEmail,
   isSubscriptionTitle,
+  isTransactionDescription,
   isACSUID,
   isPAN,
   isACSKeyName,

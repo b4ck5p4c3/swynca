@@ -84,7 +84,9 @@ export async function findMemberTransactions(
  * @param input The transaction details.
  * @returns A promise that resolves to the created Member transaction.
  */
-export async function create(input: CreateInput): Promise<MemberTransaction> {
+export async function createMemberTransaction(
+  input: CreateInput,
+): Promise<MemberTransaction> {
   const transaction = await prisma.memberTransaction.create({ data: input });
   await prisma.balance.upsert({
     where: {

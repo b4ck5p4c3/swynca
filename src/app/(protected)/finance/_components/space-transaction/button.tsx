@@ -18,13 +18,13 @@ const CreateTransactionButton: React.FC = ({}) => {
       )}
       <div className="flex gap-2">
         <button
-          className="py-3 px-5 w-full text-sm font-medium text-center rounded-sm text-white sm:w-auto bg-green-600"
+          className="py-3 px-5 w-full text-sm font-medium text-center rounded-md text-white sm:w-auto bg-green-600"
           onClick={() => setKind(TransactionType.DEPOSIT)}
         >
           Deposit
         </button>
         <button
-          className="py-3 px-5 w-full text-sm font-medium text-center rounded-sm text-white sm:w-auto bg-red-600"
+          className="py-3 px-5 w-full text-sm font-medium text-center rounded-md text-white sm:w-auto bg-red-600"
           onClick={() => setKind(TransactionType.WITHDRAWAL)}
         >
           Withdraw

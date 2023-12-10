@@ -9,7 +9,15 @@ const dateOnlyFormat = new Intl.DateTimeFormat(LOCALE, {
   month: "short",
   year: "numeric",
 });
-const dateTimeFormat = new Intl.DateTimeFormat(LOCALE);
+
+const dateTimeFormat = new Intl.DateTimeFormat(LOCALE, {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+});
 
 const currencyFormat = new Intl.NumberFormat(LOCALE, {
   style: "currency",
@@ -40,4 +48,13 @@ export function formatDateShort(date: any): string {
     return dateOnlyFormat.format(new Date(date));
   }
   return dateOnlyFormat.format(date);
+}
+
+export function formatDateTimeShort(date: string): string;
+export function formatDateTimeShort(date: Date): string;
+export function formatDateTimeShort(date: any): string {
+  if (typeof date === "string") {
+    return dateTimeFormat.format(new Date(date));
+  }
+  return dateTimeFormat.format(date);
 }

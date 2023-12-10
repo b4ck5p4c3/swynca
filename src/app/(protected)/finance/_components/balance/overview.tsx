@@ -1,4 +1,4 @@
-import { fetchCurrentSpaceBalance } from "@/data/space-transaction/fetch";
+import { fetchCurrentSpaceBalance } from "@/data/space-finance/fetch";
 import { formatCurrency } from "@/lib/locale";
 import classNames from "classnames";
 

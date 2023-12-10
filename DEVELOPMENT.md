@@ -45,7 +45,8 @@ Other errors (considered as "internal server errors") should be thrown and handl
 
 If you're handling a such "internal server error" due to specific requirements – don't forget to register it in tracing engine.
 
-In data layer actions, don't forget to revalidate cache after any changes using `revalidateTag` function.
+~~In data layer actions, don't forget to revalidate cache after any changes using `revalidateTag` function.~~
+(there is no good way to do it in next yet)
 
 Example:
 

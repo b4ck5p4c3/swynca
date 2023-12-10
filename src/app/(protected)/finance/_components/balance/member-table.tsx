@@ -1,6 +1,7 @@
-import { fetchMemberBalanceTable } from "@/data/member-transaction/fetch";
+import { fetchMemberBalanceTable } from "@/data/member-finance/fetch";
 import { formatCurrency } from "@/lib/locale";
 import classNames from "classnames";
+import BillMembers from "../bill-members/button";
 
 export type MembersBalanceTableProps = {};
 
@@ -14,7 +15,9 @@ const MembersBalanceTable: React.FC<MembersBalanceTableProps> = async ({}) => {
             <div className="text-lg font-semibold text-left text-gray-900 bg-white">
               Balances
             </div>
-            <div>{/* <CreateMembership /> */}</div>
+            <div>
+              <BillMembers />
+            </div>
           </div>
           <table className="w-full text-sm text-left text-gray-700">
             <thead className="text-xs uppercase bg-gray-200 font-semibold">
@@ -23,13 +26,13 @@ const MembersBalanceTable: React.FC<MembersBalanceTableProps> = async ({}) => {
                   Member
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Due
+                  Membership
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Balance
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Balance after next payment
+                  Next month balance
                 </th>
                 <th scope="col" className="px-6 py-3"></th>
               </tr>

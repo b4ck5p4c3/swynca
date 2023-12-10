@@ -127,7 +127,6 @@ model SpaceTransaction {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  deleted   DateTime?
 
   Actor Member? @relation(fields: [actorId], references: [id])
 }

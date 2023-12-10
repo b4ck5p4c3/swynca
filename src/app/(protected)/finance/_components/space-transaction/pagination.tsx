@@ -16,7 +16,6 @@ export type PaginationProps = {
 function paginationHelper(totalPages: number, currentPage: number) {
   const MAX_PAGES = 6;
   let pagesArray = [];
-  let hasMore = false;
 
   // Calculate the start and end page index based on the current page
   const halfMaxPages = Math.floor(MAX_PAGES / 2);
@@ -55,6 +54,10 @@ const Pagination: React.FC<PaginationProps> = ({ pagination }) => {
   let to = pagination.offset + pagination.perPage;
   if (to > pagination.count) {
     to = pagination.count;
+  }
+
+  if (pagination.count === 0) {
+    return null;
   }
 
   return (

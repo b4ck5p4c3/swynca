@@ -1,7 +1,14 @@
 import MembersBalanceTable from "./_components/balance/member-table";
 import BalanceOverview from "./_components/balance/overview";
+import SpaceTransactionsTable from "./_components/space-transaction/table";
 
-export default async function FinancePage() {
+export type FinancePageProps = {
+  searchParams: {
+    page?: string;
+  };
+};
+
+const FinancePage: React.FC<FinancePageProps> = ({ searchParams }) => {
   return (
     <>
       <main className="flex flex-col gap-8">
@@ -10,7 +17,10 @@ export default async function FinancePage() {
         </header>
         <BalanceOverview />
         <MembersBalanceTable />
+        <SpaceTransactionsTable page={searchParams.page} />
       </main>
     </>
   );
-}
+};
+
+export default FinancePage;

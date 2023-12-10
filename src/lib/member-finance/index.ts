@@ -1,7 +1,8 @@
-import { Prisma } from "@prisma/client";
+import { MemberTransaction, Prisma, SpaceTransaction } from "@prisma/client";
 import prisma from "../db";
-import { getBalance } from "../member-transaction";
+import { createMemberTransaction, getBalance } from "../member-transaction";
 import { getActiveSubscriptions } from "../subscription";
+import { createSpaceTransaction } from "../space-transaction";
 
 /**
  * Represents a balance flow entry.
@@ -60,3 +61,57 @@ export async function getBalancesFlow(): Promise<BalanceFlowEntry[]> {
     ),
   }));
 }
+
+/**
+ * Handles a donation by a member.
+ * @param member - The ID of the member.
+ * @param amount - The amount to be donated.
+ * @param description - (Optional) A description of the donation.
+ * @param options - (Optional) Additional options for the donation.
+ * @param options.actorId - The ID of the actor initiating the donation.
+ *
+ * @returns An object containing the space transaction and member transaction.
+ */
+export async function donate(
+  member: string,
+  amount: Prisma.Decimal,
+  description?: string,
+  options?: {
+    actorId: string;
+  },
+): Promise<{
+  spaceTransaction: SpaceTransaction;
+  memberTransaction: MemberTransaction;
+}> {
+  const memberTransaction = await createMemberTransaction({
+    amount,
+    source: "DONATE",
+    subjectId: member,
+    type: "DEPOSIT",
+    comment: description,
+    actorId: options?.actorId,
+  });
+
+  const spaceTransaction = await createSpaceTransaction({
+    type: "DEPOSIT",
+    source: "DONATE",
+    amount,
+    comment: description,
+    actorId: options?.actorId,
+  });
+
+  return {
+    memberTransaction,
+    spaceTransaction,
+  };
+}
+
+/**
+ * Handles a balance top-up by a member.
+ * @param amount
+ * @param description
+ */
+export async function topUp(
+  amount: Prisma.Decimal,
+  description?: string,
+): Promise<MemberTransaction> {}
