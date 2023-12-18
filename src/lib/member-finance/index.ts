@@ -17,12 +17,10 @@ export type BalanceFlowEntry = {
 };
 
 /**
- * Retrieves the balance flow for all members.
- * @returns A Promise that resolves to an array of BalanceFlowEntry objects.
+ * Fetch active members, their balances and ongoing subscriptions
  */
-export async function getBalancesFlow(): Promise<BalanceFlowEntry[]> {
-  // Fetch active members, their balances and ongoing subscriptions
-  const data = await prisma.member.findMany({
+export async function getMembersSubscriptionData(): Promise<[]> {
+  return await prisma.member.findMany({
     where: {
       status: "ACTIVE",
     },
@@ -46,6 +44,14 @@ export async function getBalancesFlow(): Promise<BalanceFlowEntry[]> {
       },
     },
   });
+}
+
+/**
+ * Retrieves the balance flow for all members.
+ * @returns A Promise that resolves to an array of BalanceFlowEntry objects.
+ */
+export async function getBalancesFlow(): Promise<BalanceFlowEntry[]> {
+  const data = await getMembersSubscriptionData();
 
   // Calculate the monthly expenses for each member,
   // and return along with the current balance

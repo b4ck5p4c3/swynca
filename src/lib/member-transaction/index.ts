@@ -7,6 +7,7 @@ import {
   MemberTransaction,
 } from "@prisma/client";
 import prisma from "../db";
+import { getMembersSubscriptionData } from "@/lib/member-finance";
 
 /**
  * Transaction with those types will not affect Member's balance
@@ -171,4 +172,21 @@ export async function recalculateBalances(): Promise<void> {
       })),
     });
   });
+}
+
+export async function makeWithdrawTransactions(actorId: string): Promise<void> {
+  const data = await getMembersSubscriptionData();
+  for (const record of data) {
+    for (const idx in record.MembershipSubscriptionHistory) {
+      const sub = record.MembershipSubscriptionHistory[idx];
+      await createMemberTransaction({
+        amount: sub.membership.amount,
+        subjectId: sub.memberId,
+        type: "WITHDRAWAL",
+        target: "MEMBERSHIP",
+        comment: "Bill action",
+        actorId: actorId
+      });
+    }
+  }
 }
