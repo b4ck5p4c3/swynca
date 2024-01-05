@@ -1,8 +1,8 @@
 import prisma from "@/lib/db";
 
 export type MemberBalanceDTO = {
-    amount: number|undefined;
-    amountAfterSubscriptionRenew: number|undefined;
+    amount: string;
+    amountAfterSubscriptionRenew: string;
 }
 
 export async function fetchBalance(memberId: string) : Promise<MemberBalanceDTO> {
@@ -23,5 +23,5 @@ export async function fetchBalance(memberId: string) : Promise<MemberBalanceDTO>
     if (data.length > 0) {
         return data[0];
     }
-    return {amount: undefined, amountAfterSubscriptionRenew: undefined};
+    return {amount: '', amountAfterSubscriptionRenew: ''};
 }
