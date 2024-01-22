@@ -7,9 +7,11 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-
-RUN yarn config set network-timeout 1200000
+COPY package.json yarn.lock* .yarnrc.yml package-lock.json* pnpm-lock.yaml* ./
+RUN yarn config set network-timeout 1200000 \
+    && corepack enable \
+    && yarn set version stable \
+    && yarn config set --home enableTelemetry 0
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
