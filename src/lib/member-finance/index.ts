@@ -1,8 +1,8 @@
 import { MemberTransaction, Prisma, SpaceTransaction } from "@prisma/client";
 import prisma from "../db";
-import { createMemberTransaction, getBalance } from "../member-transaction";
+import { CreateInput as CreateInputMemberTransaction, createMemberTransaction, getBalance } from "../member-transaction";
 import { getActiveSubscriptions } from "../subscription";
-import { createSpaceTransaction } from "../space-transaction";
+import { CreateInput as CreateInputSpaceTransaction, createSpaceTransaction } from "../space-transaction";
 
 /**
  * Represents a balance flow entry.
@@ -19,7 +19,7 @@ export type BalanceFlowEntry = {
 /**
  * Fetch active members, their balances and ongoing subscriptions
  */
-export async function getMembersSubscriptionData(): Promise<[]> {
+export async function getMembersSubscriptionData(): Promise<any[]> {
   return await prisma.member.findMany({
     where: {
       status: "ACTIVE",
@@ -43,7 +43,7 @@ export async function getMembersSubscriptionData(): Promise<[]> {
         },
       },
     },
-  });
+  }) as [];
 }
 
 /**
@@ -62,7 +62,7 @@ export async function getBalancesFlow(): Promise<BalanceFlowEntry[]> {
     },
     balance: member.Balance?.amount ?? new Prisma.Decimal(0),
     monthlyExpenses: member.MembershipSubscriptionHistory.reduce(
-      (sum, el) => el.membership.amount.add(sum),
+      (sum: any, el: any) => el.membership.amount.add(sum),
       new Prisma.Decimal(0),
     ),
   }));
@@ -96,15 +96,14 @@ export async function donate(
     type: "DEPOSIT",
     comment: description,
     actorId: options?.actorId,
-  });
-
+  } as CreateInputMemberTransaction);
   const spaceTransaction = await createSpaceTransaction({
     type: "DEPOSIT",
     source: "DONATE",
     amount,
     comment: description,
     actorId: options?.actorId,
-  });
+  } as CreateInputSpaceTransaction);
 
   return {
     memberTransaction,
@@ -113,11 +112,13 @@ export async function donate(
 }
 
 /**
- * Handles a balance top-up by a member.
+ * Handles a balance top-up by a member (unused for now).
  * @param amount
  * @param description
  */
+/*
 export async function topUp(
   amount: Prisma.Decimal,
   description?: string,
 ): Promise<MemberTransaction> {}
+*/

@@ -25,7 +25,7 @@ export default class LogtoAccountManagement
   /**
    * Prisma client
    */
-  private prisma: PrismaClient;
+  private prisma: PrismaClient|undefined;
 
   /**
    * ID of M2M application in Logto
