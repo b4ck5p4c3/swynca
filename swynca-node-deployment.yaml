@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.31.2 (a92241f79)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: swynca-node
+  name: swynca-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: swynca-node
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.31.2 (a92241f79)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/app-network: "true"
+        io.kompose.service: swynca-node
+    spec:
+      containers:
+        - env:
+            - name: DATABASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: DATABASE_URL
+                  name: swynca-env
+            - name: LOGTO_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  key: LOGTO_CLIENT_ID
+                  name: swynca-env
+            - name: LOGTO_CLIENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  key: LOGTO_CLIENT_SECRET
+                  name: swynca-env
+            - name: LOGTO_ISSUER
+              valueFrom:
+                configMapKeyRef:
+                  key: LOGTO_ISSUER
+                  name: swynca-env
+            - name: LOGTO_M2M_APP_ID
+              valueFrom:
+                configMapKeyRef:
+                  key: LOGTO_M2M_APP_ID
+                  name: swynca-env
+            - name: LOGTO_M2M_APP_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  key: LOGTO_M2M_APP_SECRET
+                  name: swynca-env
+            - name: LOGTO_M2M_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  key: LOGTO_M2M_ENDPOINT
+                  name: swynca-env
+            - name: NEXTAUTH_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXTAUTH_SECRET
+                  name: swynca-env
+            - name: NEXTAUTH_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXTAUTH_URL
+                  name: swynca-env
+            - name: NEXT_PUBLIC_SWYNCA_CURRENCY
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_SWYNCA_CURRENCY
+                  name: swynca-env
+            - name: NEXT_PUBLIC_SWYNCA_LOCALE
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_SWYNCA_LOCALE
+                  name: swynca-env
+            - name: NEXT_PUBLIC_SWYNCA_TZ
+              valueFrom:
+                configMapKeyRef:
+                  key: NEXT_PUBLIC_SWYNCA_TZ
+                  name: swynca-env
+          image: swynca:prod
+          name: swynca
+          ports:
+            - containerPort: 3000
+              hostPort: 3000
+              protocol: TCP
+          resources: {}
+      restartPolicy: Always
+status: {}
