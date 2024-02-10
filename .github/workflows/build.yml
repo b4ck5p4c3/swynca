@@ -35,7 +35,7 @@ jobs:
         with:
           context: .
           file: node.prod.dockerfile
-          secrets: |
+          build-args: |
               NEXTAUTH_URL: ${{ vars.NEXTAUTH_URL }}
               LOGTO_ISSUER: ${{ vars.LOGTO_ISSUER }}
               LOGTO_M2M_ENDPOINT: ${{ vars.LOGTO_M2M_ENDPOINT }}
