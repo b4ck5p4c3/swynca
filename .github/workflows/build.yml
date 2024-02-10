@@ -3,16 +3,6 @@ on:
   push:
     branches:
       - dev
-env:
-  NEXTAUTH_URL: ${{ vars.NEXTAUTH_URL }}
-  LOGTO_ISSUER: ${{ vars.LOGTO_ISSUER }}
-  LOGTO_M2M_ENDPOINT: ${{ vars.LOGTO_M2M_ENDPOINT }}
-  NEXT_PUBLIC_SWYNCA_TZ: ${{ vars.NEXT_PUBLIC_SWYNCA_TZ }}
-  
-  NEXT_PUBLIC_SWYNCA_LOCALE: ${{ vars.NEXT_PUBLIC_SWYNCA_LOCALE }}
-  
-  NEXT_PUBLIC_SWYNCA_CURRENCY: ${{ vars.NEXT_PUBLIC_SWYNCA_CURRENCY }}
-  NEXT_TELEMETRY_DISABLED: ${{ vars.NEXT_TELEMETRY_DISABLED }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,6 +35,14 @@ jobs:
         with:
           context: .
           file: node.prod.dockerfile
+          secrets: |
+              NEXTAUTH_URL: ${{ vars.NEXTAUTH_URL }}
+              LOGTO_ISSUER: ${{ vars.LOGTO_ISSUER }}
+              LOGTO_M2M_ENDPOINT: ${{ vars.LOGTO_M2M_ENDPOINT }}
+              NEXT_PUBLIC_SWYNCA_TZ: ${{ vars.NEXT_PUBLIC_SWYNCA_TZ }}
+              NEXT_PUBLIC_SWYNCA_LOCALE: ${{ vars.NEXT_PUBLIC_SWYNCA_LOCALE }}
+              NEXT_PUBLIC_SWYNCA_CURRENCY: ${{ vars.NEXT_PUBLIC_SWYNCA_CURRENCY }}
+              NEXT_TELEMETRY_DISABLED: ${{ vars.NEXT_TELEMETRY_DISABLED }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.ref_type == 'tag' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
