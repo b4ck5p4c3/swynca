@@ -1,5 +1,17 @@
 import prisma from "../db";
 
+export async function getActiveSubscriptions(memberId: string) {
+  return prisma.membershipSubscription.findMany({
+    where: {
+      memberId,
+      declinedAt: null,
+    },
+    include: {
+      membership: true,
+    },
+  });
+}
+
 export async function removeSubscription(
   subscriptionId: string,
 ): Promise<void> {

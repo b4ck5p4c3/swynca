@@ -1,7 +1,7 @@
 "use server";
 
 import { getSession } from "@/app/auth";
-import { create } from "@/lib/space-transaction";
+import { createSpaceTransaction } from "@/lib/space-transaction";
 import { Prisma, TransactionType } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { Literal, Record, Static, String, Union } from "runtypes";
@@ -90,7 +90,7 @@ export async function deposit(
     };
   }
 
-  await create({
+  await createSpaceTransaction({
     amount: decimalAmount,
     type: TransactionType.DEPOSIT,
     source,
@@ -140,7 +140,7 @@ export async function withdraw(
     };
   }
 
-  await create({
+  await createSpaceTransaction({
     amount: decimalAmount,
     type: TransactionType.WITHDRAWAL,
     target: target,
