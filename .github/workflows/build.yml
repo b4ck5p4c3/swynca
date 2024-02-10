@@ -43,6 +43,12 @@ jobs:
               NEXT_PUBLIC_SWYNCA_LOCALE: ${{ vars.NEXT_PUBLIC_SWYNCA_LOCALE }}
               NEXT_PUBLIC_SWYNCA_CURRENCY: ${{ vars.NEXT_PUBLIC_SWYNCA_CURRENCY }}
               NEXT_TELEMETRY_DISABLED: ${{ vars.NEXT_TELEMETRY_DISABLED }}
+              LOGTO_CLIENT_ID: ${{ secrets.LOGTO_CLIENT_ID }}
+              LOGTO_CLIENT_SECRET: ${{ secrets.LOGTO_CLIENT_SECRET }}
+              LOGTO_M2M_APP_ID: ${{ secrets.LOGTO_M2M_APP_ID }}
+              LOGTO_M2M_APP_SECRET: ${{ secrets.LOGTO_M2M_APP_SECRET }}
+              NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+              DATABASE_URL: ${{ secrets.DATABASE_URL }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.ref_type == 'tag' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
