@@ -7,17 +7,9 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* .yarnrc.yml package-lock.json* pnpm-lock.yaml* ./
-RUN yarn config set network-timeout 1200000 \
-    && corepack enable \
-    && yarn set version stable \
-    && yarn config set --home enableTelemetry 0
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+COPY package.json yarn.lock ./
+RUN corepack enable && yarn set version stable
+RUN yarn --immutable
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -27,37 +19,16 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-ARG NEXTAUTH_URL
-ARG LOGTO_ISSUER
-ARG LOGTO_M2M_ENDPOINT
 ARG NEXT_PUBLIC_SWYNCA_TZ
 ARG NEXT_PUBLIC_SWYNCA_LOCALE
 ARG NEXT_PUBLIC_SWYNCA_CURRENCY
-ARG LOGTO_CLIENT_ID
-ARG LOGTO_CLIENT_SECRET
-ARG LOGTO_M2M_APP_ID
-ARG LOGTO_M2M_APP_SECRET
-ARG NEXTAUTH_SECRET
-ARG DATABASE_URL
 
-ENV NEXTAUTH_URL ${NEXTAUTH_URL}
-ENV LOGTO_ISSUER ${LOGTO_ISSUER}
-ENV LOGTO_M2M_ENDPOINT ${LOGTO_M2M_ENDPOINT}
 ENV NEXT_PUBLIC_SWYNCA_TZ ${NEXT_PUBLIC_SWYNCA_TZ}
 ENV NEXT_PUBLIC_SWYNCA_LOCALE ${NEXT_PUBLIC_SWYNCA_LOCALE}
 ENV NEXT_PUBLIC_SWYNCA_CURRENCY ${NEXT_PUBLIC_SWYNCA_CURRENCY}
-ENV LOGTO_CLIENT_ID ${LOGTO_CLIENT_ID}
-ENV LOGTO_CLIENT_SECRET ${LOGTO_CLIENT_SECRET}
-ENV LOGTO_M2M_APP_ID ${LOGTO_M2M_APP_ID}
-ENV LOGTO_M2M_APP_SECRET ${LOGTO_M2M_APP_SECRET}
-ENV NEXTAUTH_SECRET ${NEXTAUTH_SECRET}
-ENV DATABASE_URL ${DATABASE_URL}
 
 RUN yarn prisma generate
 RUN yarn build
-
-# If using npm comment out above and use below instead
-# RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
