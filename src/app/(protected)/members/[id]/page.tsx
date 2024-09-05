@@ -21,7 +21,7 @@ async function MemberPage(props: { params: { id: string } }) {
   const membershipHistory = await fetchMemberHistory(member.id);
   const acsKeys = await fetchMemberKeys(member.id);
   const balanceData = await fetchBalance(member.id);
-  console.log('balanceData', balanceData);
+
   return (
     <>
       <div className="flex flex-col gap-8">

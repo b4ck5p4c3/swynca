@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client'
 import authorizedOnlyRequest from "@/lib/auth/telegram-bot-api";
 
 type DebtData = {
-    username: string,
     id: string,
     debt: number
 };

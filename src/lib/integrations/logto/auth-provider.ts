@@ -7,7 +7,6 @@ type LogtoProfile = {
   sub: string;
   name: string | null;
   picture: string | null;
-  username: string;
   email: string;
   email_verified: boolean;
   at_hash: string;

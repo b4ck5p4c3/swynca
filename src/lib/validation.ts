@@ -7,11 +7,6 @@ const isName = isGenericEntityName;
 
 const isEmail = (email: string) => email.match(/.+@.+\..+/);
 
-const isUsername = (username: string) =>
-  username.match(/^[a-zA-Z]+[a-zA-Z0-9_]*$/u) &&
-  username.length >= 3 &&
-  username.length <= 64;
-
 const isSubscriptionTitle = (title: string) =>
   title.length >= 0 && title.match(/^.*$/u);
 
@@ -47,7 +42,6 @@ const isACSKeyName = isGenericEntityName;
 
 export {
   isName,
-  isUsername,
   isEmail,
   isSubscriptionTitle,
   isTransactionDescription,

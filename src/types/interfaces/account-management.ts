@@ -14,7 +14,6 @@ export interface AccountDTO {
 export interface AccountCreateDTO {
   email: string;
   name: string;
-  username: string;
   active?: boolean;
   password?: string;
 }

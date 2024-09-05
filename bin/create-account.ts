@@ -12,17 +12,11 @@ import { create } from "../src/lib/member";
 dotenv.config();
 
 (async () => {
-  const { name, username, email } = await inquirer.prompt([
+  const { name, email } = await inquirer.prompt([
     {
       type: "input",
       name: "name",
       message: "Name:",
-      validate: (input) => input.length > 0,
-    },
-    {
-      type: "input",
-      name: "username",
-      message: "Username:",
       validate: (input) => input.length > 0,
     },
     {
@@ -36,12 +30,11 @@ dotenv.config();
   const password = (await randomBytes(8)).toString("hex");
   const member = await create({
     name,
-    username,
     email,
     status: MemberStatuses.ACTIVE,
     password,
   });
 
-  console.log(`Created ${name} (${username}) ${member}`);
+  console.log(`Created ${name} ${member}`);
   console.log("Password:", password);
 })();

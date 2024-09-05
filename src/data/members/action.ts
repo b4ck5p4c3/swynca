@@ -7,8 +7,7 @@ import { Record, Static, String } from "runtypes";
 
 const CreateMemberRequest = Record({
   email: String,
-  name: String,
-  username: String,
+  name: String
 });
 
 export type CreateMemberRequest = Static<typeof CreateMemberRequest>;

@@ -149,7 +149,6 @@ export default class LogtoAccountManagement
     const api = await this.getClient();
     const response = await api.post("/users", {
       name: props.name,
-      username: props.username,
       password: props.password,
       primaryEmail: props.email,
     });

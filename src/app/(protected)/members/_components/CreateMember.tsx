@@ -10,7 +10,6 @@ import Spinner from "@/shared/Spinner";
 export type FormValues = {
   email: string;
   name: string;
-  username: string;
 };
 
 export type CreateMemberModalProps = {
@@ -46,7 +45,7 @@ const CreateMemberModal: React.FC<CreateMemberModalProps> = ({ onClose }) => {
           </header>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4">
-              {error && (
+              {error !== undefined && (
                 <div
                   className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:text-red-400"
                   role="alert"
@@ -66,21 +65,6 @@ const CreateMemberModal: React.FC<CreateMemberModalProps> = ({ onClose }) => {
                   autoFocus
                   {...register("name", {
                     pattern: /^[\p{L}\p{N}]+( [\p{L}\p{N}]+)*$/u,
-                    required: true,
-                  })}
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <span className="font-semibold text-gray-600">Username</span>
-                <input
-                  type="text"
-                  className={classNames(
-                    "w-full rounded ring-1 ring-gray-200 p-3",
-                    { "ring-red-500 text-red-600": !!errors.username }
-                  )}
-                  placeholder="mary_doe"
-                  {...register("username", {
-                    pattern: /^[a-zA-Z]+[a-zA-Z0-9_]*$/u,
                     required: true,
                   })}
                 />

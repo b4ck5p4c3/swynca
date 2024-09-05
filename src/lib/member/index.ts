@@ -1,11 +1,10 @@
 import { MemberStatuses, PrismaClient } from "@prisma/client";
 import { AccountManagement } from "../auth/provider";
-import { isEmail, isName, isUsername } from "../validation";
+import { isEmail, isName } from "../validation";
 import prisma from "../db";
 
 export type AccountCreateDTO = {
   name: string;
-  username: string;
   email: string;
   status?: MemberStatuses;
   password?: string;
@@ -48,7 +47,6 @@ export async function isExistsById(memberId: string): Promise<boolean> {
  */
 export async function create({
   name,
-  username,
   email,
   status,
   password,
@@ -63,15 +61,10 @@ export async function create({
     throw new Error("Incorrect email");
   }
 
-  if (!isUsername(username)) {
-    throw new Error("Incorrect username");
-  }
-
   const { member, externalAccount } = await prisma.$transaction(async (tx) => {
     const member = await tx.member.create({
       data: {
         name,
-        username,
         email,
         status,
       },
@@ -80,7 +73,6 @@ export async function create({
     const externalAccount = await accountManagement.createAccount({
       name,
       email,
-      username,
       password,
       active: status ? status === "ACTIVE" : true,
     });

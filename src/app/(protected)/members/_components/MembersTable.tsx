@@ -7,7 +7,6 @@ export type MembersTableProps = {
   members: {
     id: string;
     name: string;
-    username: string;
     status: MemberStatuses;
   }[];
   title: string;
@@ -42,9 +41,6 @@ const MembersTable: React.FC<MembersTableProps> = ({
             Name
           </th>
           <th scope="col" className="px-6 py-3">
-            Username
-          </th>
-          <th scope="col" className="px-6 py-3">
             <span className="sr-only">Actions</span>
           </th>
         </tr>
@@ -66,7 +62,6 @@ const MembersTable: React.FC<MembersTableProps> = ({
               >
                 {member.name}
               </th>
-              <td className="px-6 py-4">{member.username}</td>
               <td className="px-6 py-4 text-right">
                 <Link
                   href={`/members/${member.id}`}

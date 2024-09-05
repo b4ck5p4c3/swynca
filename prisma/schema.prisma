@@ -71,7 +71,6 @@ model Member {
   id       String         @id @default(uuid())
   name     String
   email    String         @unique
-  username String         @unique
   status   MemberStatuses @default(ACTIVE)
   joinedAt DateTime       @default(now())
 

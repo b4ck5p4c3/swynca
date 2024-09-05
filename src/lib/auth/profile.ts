@@ -4,7 +4,6 @@ export type Profile = {
   id: string;
   name: string;
   email: string;
-  username: string;
   image?: string;
 };
 
@@ -16,12 +15,11 @@ export function memberToProfile(
   member: Member,
   ssoProfile?: SSOProfile,
 ): Profile {
-  const { id, email, name, username } = member;
+  const { id, email, name } = member;
   return {
     id,
     email,
     name,
-    username,
     image: ssoProfile?.image,
   };
 }

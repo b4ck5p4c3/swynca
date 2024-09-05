@@ -10,13 +10,11 @@ const nextAuth = NextAuth({
         provider: token.externalProvider as string,
       };
       session.user.id = token.sub as string;
-      session.user.username = token.username as string | undefined;
       session.user.image = token.picture;
       return session;
     },
     async jwt({ token, user, profile, account }) {
       if (profile && account) {
-        token.username = user.name;
         token.picture = user.image;
         token.externalId = profile.sub;
         token.externalProvider = account.provider;
